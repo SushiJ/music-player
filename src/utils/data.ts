@@ -1,14 +1,15 @@
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 interface Song {
   name: string;
   cover: string;
   artist: string;
   audio: string;
   color: Array<string>;
-  id: string;
+  id: number;
   active: boolean;
 }
 type SongList = Song[];
+
 export function songData(): SongList {
   return [
     {
@@ -18,7 +19,7 @@ export function songData(): SongList {
       artist: "Aso, Middle School, Aviino",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=10075",
       color: ["#205950", "#2ab3bf"],
-      id: uuidv4(),
+      id: 0,
       active: true,
     },
     {
@@ -28,7 +29,7 @@ export function songData(): SongList {
       artist: "Aiguille",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=9272",
       color: ["#EF8EA9", "#ab417f"],
-      id: uuidv4(),
+      id: 1,
       active: false,
     },
     {
@@ -38,7 +39,7 @@ export function songData(): SongList {
       artist: "Swørn",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=9222",
       color: ["#CD607D", "#c94043"],
-      id: uuidv4(),
+      id: 2,
       active: false,
     },
     {
@@ -48,7 +49,7 @@ export function songData(): SongList {
       artist: "Aiguille",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=9148",
       color: ["#EF8EA9", "#ab417f"],
-      id: uuidv4(),
+      id: 3,
       active: false,
     },
     {
@@ -58,7 +59,7 @@ export function songData(): SongList {
       artist: "Swørn",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=9228",
       color: ["#CD607D", "#c94043"],
-      id: uuidv4(),
+      id: 4,
       active: false,
     },
     {
@@ -68,7 +69,7 @@ export function songData(): SongList {
       artist: "Aso, Middle School, Aviino",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=10074",
       color: ["#205950", "#2ab3bf"],
-      id: uuidv4(),
+      id: 5,
       active: false,
     },
     //ADD MORE HERE

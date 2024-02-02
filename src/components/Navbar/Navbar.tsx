@@ -1,3 +1,4 @@
+import { navbar } from "./navbar.css";
 export function Navbar() {
-  return <div>Navbar</div>;
+  return <div className={navbar}>Navbar</div>;
 }
