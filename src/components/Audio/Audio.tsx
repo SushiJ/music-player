@@ -1,18 +1,10 @@
 import { forwardRef } from "react";
 
-type Props = {
-  src: string;
-  songName: string;
-  artist: string;
-};
-
-const Audio = forwardRef<HTMLAudioElement, Props>(
-  function AudioForwardRef(props, AudioRef) {
+const Audio = forwardRef<HTMLAudioElement>(
+  function AudioForwardRef(_, AudioRef) {
     return (
       <div>
-        <div>{props.songName}</div>
-        <div>{props.artist}</div>
-        <audio src={props.src} ref={AudioRef} />
+        <audio ref={AudioRef} preload="metadata" />
       </div>
     );
   },

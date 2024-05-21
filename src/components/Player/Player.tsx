@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   ForwardIcon,
   BackwardIcon,
@@ -7,76 +7,58 @@ import {
 } from "@heroicons/react/24/outline";
 
 import Audio from "../Audio/Audio";
-import { songData } from "../../utils/data";
 import { controls, icon, playerContainer } from "./player.css";
+import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const data = useMemo(() => songData(), []);
-  const initialSong = data[0];
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentSong, setCurrentSong] = useState(initialSong);
+  const { song, dispatch, isPlaying } = useAudio();
 
-  function handlePlay() {
-    if (!audioRef.current) return;
-    if (isPlaying) return;
-    audioRef.current.play();
-    audioRef.current.volume = 0.05;
-    setIsPlaying(true);
-  }
-
-  function handlePause() {
-    if (!audioRef.current) return;
-    if (!isPlaying) return;
-    audioRef.current.pause();
-    setIsPlaying(false);
-  }
-
-  function handleSkip(direction: "back" | "forward") {
-    if (!audioRef.current) return;
-    let currIndx = data.findIndex((song) => song.id === currentSong.id);
-
-    if (direction === "forward") {
-      setCurrentSong(data[(currIndx + 1) % data.length]);
+  useEffect(() => {
+    if (!audioRef.current) {
+      throw new Error("Audio ref 404");
     }
-
-    if (direction === "back") {
-      if (currIndx % data.length === 0) {
-        setCurrentSong(data[data.length - 1]);
-      } else {
-        setCurrentSong(data[currIndx - 1]);
-      }
-    }
-  }
+    audioRef.current.src = song.audio;
+    audioRef.current.volume = 1;
+    console.log("USE_EFFECT_RAN");
+  }, [song.audio]);
 
   return (
     <div className={playerContainer}>
-      <Audio
-        ref={audioRef}
-        src={currentSong.audio}
-        songName={currentSong.name}
-        artist={currentSong.artist}
-      />
-      {/*
-      <div className={rangeSlider}>
-        <input
-          type="range"
-          min={isPlaying ? audioRef.current?.currentTime : "0.00"}
-          max=""
-        />
-        <p></p>
-      </div>
-      */}
+      <pre>{JSON.stringify(song.id, null, 2)}</pre>
+      <pre>{JSON.stringify(isPlaying, null, 2)}</pre>
+      <img style={{ width: "10rem" }} src={song.cover} />
+      <div>{song.name}</div>
+      <div>{song.artist}</div>
       <div className={controls}>
-        <BackwardIcon className={icon} onClick={() => handleSkip("back")} />
+        <BackwardIcon
+          className={icon}
+          onClick={() => dispatch({ type: "SKIP_BACKWARDS" })}
+        />
         {!isPlaying ? (
-          <PlayIcon className={icon} onClick={handlePlay} />
+          <PlayIcon
+            className={icon}
+            onClick={() => {
+              dispatch({ type: "PLAY" });
+              audioRef.current?.play();
+            }}
+          />
         ) : (
-          <PauseIcon className={icon} onClick={handlePause} />
+          <PauseIcon
+            className={icon}
+            onClick={() => {
+              dispatch({ type: "PAUSE" });
+              audioRef.current?.pause();
+            }}
+          />
         )}
-        <ForwardIcon className={icon} onClick={() => handleSkip("forward")} />
+        <ForwardIcon
+          className={icon}
+          onClick={() => dispatch({ type: "SKIP_FORWARDS" })}
+        />
       </div>
+      <Audio ref={audioRef} />
     </div>
   );
 }
