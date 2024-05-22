@@ -9,9 +9,17 @@ import {
 } from "@heroicons/react/24/outline";
 
 import Audio from "../Audio/Audio";
-import { controls, icon, playerContainer, slider } from "./player.css";
+import {
+  controls,
+  icon,
+  imageBox,
+  playerContainer,
+  rightSide,
+  slider,
+} from "./player.css";
 import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
+// style: https://www.behance.net/gallery/122277499/Web-Music-Player-UI?tracking_source=search_projects|web+music+player+ui&l=67
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [volume, setVolume] = useState(1);
@@ -49,27 +57,61 @@ export function Player() {
 
   return (
     <div className={playerContainer}>
-      <pre>{JSON.stringify(song.id, null, 2)}</pre>
-      <pre>{JSON.stringify(isPlaying, null, 2)}</pre>
-      <img style={{ width: "10rem" }} src={song.cover} />
-      <div>{song.name}</div>
-      <div>{song.artist}</div>
-      <div className={controls}>
-        <BackwardIcon
-          className={icon}
-          onClick={() => dispatch({ type: "SKIP_BACKWARDS" })}
-        />
-        {!isPlaying ? (
-          <PlayIcon className={icon} onClick={handlePlay} />
-        ) : (
-          <PauseIcon className={icon} onClick={handlePause} />
-        )}
-        <ForwardIcon
-          className={icon}
-          onClick={() => dispatch({ type: "SKIP_FORWARDS" })}
+      <div className={imageBox}>
+        <img
+          style={{ width: "20rem", borderRadius: "1rem" }}
+          src={song.cover}
         />
       </div>
-      <Audio ref={audioRef} />
+      <div className={rightSide}>
+        <h1>{song.name}</h1>
+        <h4>{song.artist}</h4>
+        <div className={controls}>
+          <BackwardIcon
+            className={icon}
+            onClick={() => dispatch({ type: "SKIP_BACKWARDS" })}
+          />
+          {!isPlaying ? (
+            <PlayIcon className={icon} onClick={handlePlay} />
+          ) : (
+            <PauseIcon className={icon} onClick={handlePause} />
+          )}
+          <ForwardIcon
+            className={icon}
+            onClick={() => dispatch({ type: "SKIP_FORWARDS" })}
+          />
+        </div>
+        <div className={slider}>
+          {!muted ? (
+            <span
+              onClick={() => {
+                setMuted(!muted);
+                setVolume(0);
+              }}
+            >
+              <SpeakerWaveIcon className={icon} />
+            </span>
+          ) : (
+            <span
+              onClick={() => {
+                setMuted(!muted);
+                setVolume(1);
+              }}
+            >
+              <SpeakerXMarkIcon className={icon} />
+            </span>
+          )}
+          <input
+            onChange={changeVolume}
+            value={volume}
+            max="1"
+            min="0"
+            step="0.01"
+            type="range"
+          />
+          <p>{(volume * 100).toFixed(0) + "%"}</p>
+        </div>
+      </div>
       {/* <input */}
       {/*   value={audioRef.current?.currentTime} */}
       {/*   type="range" */}
@@ -77,36 +119,7 @@ export function Player() {
       {/*   max={10} */}
       {/*   onChange={() => {}} */}
       {/* /> */}
-      <div className={slider}>
-        {!muted ? (
-          <span
-            onClick={() => {
-              setMuted(!muted);
-              setVolume(0);
-            }}
-          >
-            <SpeakerWaveIcon className={icon} />
-          </span>
-        ) : (
-          <span
-            onClick={() => {
-              setMuted(!muted);
-              setVolume(1);
-            }}
-          >
-            <SpeakerXMarkIcon className={icon} />
-          </span>
-        )}
-        <input
-          onChange={changeVolume}
-          value={volume}
-          max="1"
-          min="0"
-          step="0.01"
-          type="range"
-        />
-      </div>
-      {(volume * 100).toFixed(0) + "%"}
+      <Audio ref={audioRef} />
     </div>
   );
 }

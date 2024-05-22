@@ -7,4 +7,5 @@ export const container = style({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
+  backgroundColor: "#010101",
 });
