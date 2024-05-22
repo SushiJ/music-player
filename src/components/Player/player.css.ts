@@ -10,13 +10,17 @@ export const icon = style({
 export const playerContainer = style({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center"
-})
+  alignItems: "center",
+});
 
 export const rangeSlider = style({
   display: "flex",
-  padding: "1rem 0"
-})
+  padding: "1rem 0",
+});
 export const controls = style({
-  paddingTop: "0.5rem"
-})
+  paddingTop: "0.5rem",
+});
+
+export const slider = style({
+  display: "flex",
+});
