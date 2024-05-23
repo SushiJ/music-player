@@ -56,10 +56,15 @@ export function Player() {
   }, [volume]);
 
   return (
-    <div className={playerContainer}>
+    <div
+      className={playerContainer}
+      style={{
+        background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
+      }}
+    >
       <div className={imageBox}>
         <img
-          style={{ width: "20rem", borderRadius: "1rem" }}
+          style={{ width: "20rem", borderRadius: "0.5rem" }}
           src={song.cover}
         />
       </div>

@@ -7,10 +7,10 @@ export const icon = style({
   padding: 1,
   margin: 1,
 });
+
 export const playerContainer = style({
-  display: "flex",
-  // flexDirection: "column",
-  alignItems: "center",
+  padding: "20px",
+  borderRadius: "20px",
 });
 
 export const controls = style({
@@ -36,11 +36,11 @@ export const slider = style({
   justifyItems: "center",
   alignItems: "center",
   fontStyle: "italic",
-  "input[type='range']": {
-    appearance: "none",
-    WebkitAppearance: "none",
-    width: "100%",
-    cursor: "pointer",
-    backgroundColor: "#ccc",
-  },
+  // "input[type='range']": {
+  //   appearance: "none",
+  //   WebkitAppearance: "none",
+  //   width: "100%",
+  //   cursor: "pointer",
+  //   backgroundColor: "#ccc",
+  // },
 });
