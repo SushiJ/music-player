@@ -1,10 +1,20 @@
 import { forwardRef } from "react";
 
-const Audio = forwardRef<HTMLAudioElement>(
-  function AudioForwardRef(_, AudioRef) {
+type Props = {
+  onLoadedData: (e: React.ChangeEvent<HTMLAudioElement>) => void;
+  onTimeUpdate: (e: React.ChangeEvent<HTMLAudioElement>) => void;
+};
+
+const Audio = forwardRef<HTMLAudioElement, Props>(
+  function AudioForwardRef(props, AudioRef) {
     return (
       <div>
-        <audio ref={AudioRef} preload="metadata" />
+        <audio
+          ref={AudioRef}
+          preload="metadata"
+          onLoadedData={props.onLoadedData}
+          ontimeupdate={props.onTimeUpdate}
+        />
       </div>
     );
   },

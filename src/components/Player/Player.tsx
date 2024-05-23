@@ -19,11 +19,16 @@ import {
 } from "./player.css";
 import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
+// TODO: Clean this up a bit and make the currentTime & remainingTime reactive,
+// Also need to do style of the input elements and such
+
 // style: https://www.behance.net/gallery/122277499/Web-Music-Player-UI?tracking_source=search_projects|web+music+player+ui&l=67
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState<boolean>(false);
+  const [duration, setDuration] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number>(0);
 
   const { song, dispatch, isPlaying } = useAudio();
 
@@ -36,24 +41,46 @@ export function Player() {
     console.log("USE_EFFECT_RAN");
   }, [song.audio]);
 
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = volume;
+  }, [volume]);
+
   function handlePlay() {
     dispatch({ type: "PLAY" });
     audioRef.current?.play();
   }
+
   function handlePause() {
     audioRef.current?.pause();
     dispatch({ type: "PAUSE" });
   }
 
-  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function changeVolume(e: React.ChangeEvent<HTMLInputElement>) {
     setMuted(false);
     setVolume(e.target.valueAsNumber);
+  }
+
+  const handleSongDrag = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = e.target.valueAsNumber;
+    setCurrentTime(e.target.valueAsNumber);
   };
 
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.volume = volume;
-  }, [volume]);
+  const timeUpdateHandler = (e: React.ChangeEvent<HTMLAudioElement>) => {
+    setDuration(e.target.duration);
+  };
+
+  function getTime(time: number) {
+    return (
+      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
+    );
+  }
+
+  function getDifference(duration: number, currentTime: number) {
+    const difference = duration - currentTime;
+    return getTime(difference);
+  }
 
   return (
     <div
@@ -86,6 +113,15 @@ export function Player() {
             onClick={() => dispatch({ type: "SKIP_FORWARDS" })}
           />
         </div>
+        <p>{getTime(currentTime)}</p>
+        <input
+          value={currentTime}
+          type="range"
+          max={duration}
+          min={0}
+          onChange={handleSongDrag}
+        />
+        <p>{"-" + getDifference(duration, currentTime)}</p>
         <div className={slider}>
           {!muted ? (
             <span
@@ -117,14 +153,11 @@ export function Player() {
           <p>{(volume * 100).toFixed(0) + "%"}</p>
         </div>
       </div>
-      {/* <input */}
-      {/*   value={audioRef.current?.currentTime} */}
-      {/*   type="range" */}
-      {/*   min={0} */}
-      {/*   max={10} */}
-      {/*   onChange={() => {}} */}
-      {/* /> */}
-      <Audio ref={audioRef} />
+      <Audio
+        ref={audioRef}
+        onLoadedData={timeUpdateHandler}
+        onTimeUpdate={timeUpdateHandler}
+      />
     </div>
   );
 }
