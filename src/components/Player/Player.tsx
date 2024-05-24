@@ -21,10 +21,7 @@ import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
 // TODO:
 // 1. Clean this up a bit (maybe?)
-// 2. Handle the skip functions better,
-//    Currently it changes the song but then the user has to manually play it
-//    again and again and again....
-// 3. need to do style of the input elements and such
+// 2. need to do style of the input elements and such
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -87,6 +84,18 @@ export function Player() {
     );
   }
 
+  function handleSkip(direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") {
+    if (direction === "SKIP_BACKWARDS") {
+      dispatch({ type: "SKIP_BACKWARDS" });
+    }
+    if (direction === "SKIP_FORWARDS") {
+      dispatch({ type: "SKIP_FORWARDS" });
+    }
+    if (isPlaying) {
+      setTimeout(() => audioRef.current?.play(), 400);
+    }
+  }
+
   return (
     <div
       className={playerContainer}
@@ -106,7 +115,7 @@ export function Player() {
         <div className={controls}>
           <BackwardIcon
             className={icon}
-            onClick={() => dispatch({ type: "SKIP_BACKWARDS" })}
+            onClick={() => handleSkip("SKIP_BACKWARDS")}
           />
           {!isPlaying ? (
             <PlayIcon className={icon} onClick={handlePlay} />
@@ -115,7 +124,7 @@ export function Player() {
           )}
           <ForwardIcon
             className={icon}
-            onClick={() => dispatch({ type: "SKIP_FORWARDS" })}
+            onClick={() => handleSkip("SKIP_FORWARDS")}
           />
         </div>
         <p>{getTime(currentTime)}</p>
