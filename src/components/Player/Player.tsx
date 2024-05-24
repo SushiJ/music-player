@@ -19,10 +19,13 @@ import {
 } from "./player.css";
 import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
-// TODO: Clean this up a bit and make the currentTime & remainingTime reactive,
-// Also need to do style of the input elements and such
+// TODO:
+// 1. Clean this up a bit (maybe?)
+// 2. Handle the skip functions better,
+//    Currently it changes the song but then the user has to manually play it
+//    again and again and again....
+// 3. need to do style of the input elements and such
 
-// style: https://www.behance.net/gallery/122277499/Web-Music-Player-UI?tracking_source=search_projects|web+music+player+ui&l=67
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [volume, setVolume] = useState(1);
@@ -38,7 +41,6 @@ export function Player() {
     }
     audioRef.current.src = song.audio;
     audioRef.current.volume = 1;
-    console.log("USE_EFFECT_RAN");
   }, [song.audio]);
 
   useEffect(() => {
@@ -46,17 +48,20 @@ export function Player() {
     audioRef.current.volume = volume;
   }, [volume]);
 
+  // Handlers
   function handlePlay() {
+    if (!audioRef.current) return;
     dispatch({ type: "PLAY" });
-    audioRef.current?.play();
+    audioRef.current.play();
   }
 
   function handlePause() {
-    audioRef.current?.pause();
+    if (!audioRef.current) return;
     dispatch({ type: "PAUSE" });
+    audioRef.current.pause();
   }
 
-  function changeVolume(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
     setMuted(false);
     setVolume(e.target.valueAsNumber);
   }
@@ -67,19 +72,19 @@ export function Player() {
     setCurrentTime(e.target.valueAsNumber);
   };
 
-  const timeUpdateHandler = (e: React.ChangeEvent<HTMLAudioElement>) => {
-    setDuration(e.target.duration);
+  const handleTimeUpdate = (e: React.ChangeEvent<HTMLAudioElement>) => {
+    setCurrentTime(e.target.currentTime);
   };
 
+  function handleDataLoaded(e: React.ChangeEvent<HTMLAudioElement>) {
+    setDuration(e.target.duration);
+  }
+
+  //
   function getTime(time: number) {
     return (
       Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
     );
-  }
-
-  function getDifference(duration: number, currentTime: number) {
-    const difference = duration - currentTime;
-    return getTime(difference);
   }
 
   return (
@@ -117,11 +122,11 @@ export function Player() {
         <input
           value={currentTime}
           type="range"
-          max={duration}
+          max={duration.toString()}
           min={0}
           onChange={handleSongDrag}
         />
-        <p>{"-" + getDifference(duration, currentTime)}</p>
+        <p>{getTime(duration)}</p>
         <div className={slider}>
           {!muted ? (
             <span
@@ -143,7 +148,7 @@ export function Player() {
             </span>
           )}
           <input
-            onChange={changeVolume}
+            onChange={handleChangeVolume}
             value={volume}
             max="1"
             min="0"
@@ -155,8 +160,10 @@ export function Player() {
       </div>
       <Audio
         ref={audioRef}
-        onLoadedData={timeUpdateHandler}
-        onTimeUpdate={timeUpdateHandler}
+        onLoadedData={handleDataLoaded}
+        onTimeUpdate={handleTimeUpdate}
+        onSeek={handleTimeUpdate}
+        onEnded={() => dispatch({ type: "SKIP_FORWARDS" })}
       />
     </div>
   );

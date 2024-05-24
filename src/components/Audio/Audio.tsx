@@ -3,6 +3,8 @@ import { forwardRef } from "react";
 type Props = {
   onLoadedData: (e: React.ChangeEvent<HTMLAudioElement>) => void;
   onTimeUpdate: (e: React.ChangeEvent<HTMLAudioElement>) => void;
+  onSeek: (e: React.ChangeEvent<HTMLAudioElement>) => void;
+  onEnded: () => void;
 };
 
 const Audio = forwardRef<HTMLAudioElement, Props>(
@@ -13,7 +15,9 @@ const Audio = forwardRef<HTMLAudioElement, Props>(
           ref={AudioRef}
           preload="metadata"
           onLoadedData={props.onLoadedData}
-          ontimeupdate={props.onTimeUpdate}
+          onTimeUpdate={props.onTimeUpdate}
+          onSeeking={props.onSeek}
+          onEnded={props.onEnded}
         />
       </div>
     );
