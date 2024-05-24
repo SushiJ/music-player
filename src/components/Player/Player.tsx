@@ -15,7 +15,8 @@ import {
   imageBox,
   playerContainer,
   rightSide,
-  slider,
+  seek,
+  volumeSlider,
 } from "./player.css";
 import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
@@ -92,7 +93,14 @@ export function Player() {
       dispatch({ type: "SKIP_FORWARDS" });
     }
     if (isPlaying) {
-      setTimeout(() => audioRef.current?.play(), 400);
+      setTimeout(() => audioRef.current?.play(), 200);
+    }
+  }
+
+  function handleOnEnded() {
+    dispatch({ type: "SKIP_FORWARDS" });
+    if (isPlaying) {
+      setTimeout(() => audioRef.current?.play(), 300);
     }
   }
 
@@ -127,16 +135,19 @@ export function Player() {
             onClick={() => handleSkip("SKIP_FORWARDS")}
           />
         </div>
-        <p>{getTime(currentTime)}</p>
-        <input
-          value={currentTime}
-          type="range"
-          max={duration.toString()}
-          min={0}
-          onChange={handleSongDrag}
-        />
-        <p>{getTime(duration)}</p>
-        <div className={slider}>
+        <div className={seek}>
+          <p>{getTime(currentTime)}</p>
+          <input
+            style={{}}
+            value={currentTime}
+            type="range"
+            max={duration.toString()}
+            min={0}
+            onChange={handleSongDrag}
+          />
+          <p>{getTime(duration)}</p>
+        </div>
+        <div className={volumeSlider}>
           {!muted ? (
             <span
               onClick={() => {
@@ -172,7 +183,7 @@ export function Player() {
         onLoadedData={handleDataLoaded}
         onTimeUpdate={handleTimeUpdate}
         onSeek={handleTimeUpdate}
-        onEnded={() => dispatch({ type: "SKIP_FORWARDS" })}
+        onEnded={handleOnEnded}
       />
     </div>
   );

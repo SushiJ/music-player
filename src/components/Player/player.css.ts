@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 
 export const icon = style({
   height: 40,
@@ -26,21 +26,51 @@ export const rightSide = style({
 
 export const imageBox = style({});
 
-export const rangeSlider = style({
-  display: "flex",
-  padding: "1rem 0",
-});
-
-export const slider = style({
+export const volumeSlider = style({
   display: "flex",
   justifyItems: "center",
   alignItems: "center",
   fontStyle: "italic",
-  // "input[type='range']": {
-  //   appearance: "none",
-  //   WebkitAppearance: "none",
-  //   width: "100%",
-  //   cursor: "pointer",
-  //   backgroundColor: "#ccc",
-  // },
+  width: "100%",
+});
+
+globalStyle(`${volumeSlider} > input`, {
+  width: "100%",
+  WebkitAppearance: "none",
+  background: "transparent",
+  cursor: "pointer",
+});
+
+globalStyle(
+  `${volumeSlider} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
+  {
+    background: "#043a5f",
+  },
+);
+
+export const seek = style({
+  display: "flex",
+  width: "100%",
+  alignItems: "center",
+  padding: "1rem 0",
+});
+
+globalStyle(`${seek} > input`, {
+  width: "100%",
+  WebkitAppearance: "none",
+  background: "transparent",
+  cursor: "pointer",
+});
+
+globalStyle(
+  `${seek} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
+  {
+    background: "#043a5f",
+    marginLeft: "12px",
+  },
+);
+
+globalStyle(`${seek} > p:first-of-type, p`, {
+  marginLeft: "6px",
+  marginRight: "6px",
 });
