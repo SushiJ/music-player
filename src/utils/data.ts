@@ -1,7 +1,7 @@
-import { SongList } from "./types";
+import { Song } from "./types";
 
 // import { v4 as uuidv4 } from "uuid";
-export const songList: SongList = [
+export const songList: Array<Song> = [
   {
     name: "Beaver Creek",
     cover:
@@ -63,4 +63,4 @@ export const songList: SongList = [
     active: false,
   },
   //ADD MORE HERE
-] as SongList;
+];

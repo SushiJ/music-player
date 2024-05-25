@@ -8,8 +8,6 @@ export type Song = {
   active: boolean;
 };
 
-export type SongList = Array<Song>;
-
 export type AppState = {
   song: Song;
   isPlaying: boolean;
