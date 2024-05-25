@@ -8,4 +8,5 @@ export const container = style({
   alignItems: "center",
   justifyContent: "center",
   backgroundColor: "#010101",
+  position: "relative",
 });
