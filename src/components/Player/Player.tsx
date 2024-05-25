@@ -64,15 +64,15 @@ export function Player() {
     setVolume(e.target.valueAsNumber);
   }
 
-  const handleSongDrag = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleSongDrag(e: React.ChangeEvent<HTMLInputElement>) {
     if (!audioRef.current) return;
     audioRef.current.currentTime = e.target.valueAsNumber;
     setCurrentTime(e.target.valueAsNumber);
-  };
+  }
 
-  const handleTimeUpdate = (e: React.ChangeEvent<HTMLAudioElement>) => {
+  function handleTimeUpdate(e: React.ChangeEvent<HTMLAudioElement>) {
     setCurrentTime(e.target.currentTime);
-  };
+  }
 
   function handleDataLoaded(e: React.ChangeEvent<HTMLAudioElement>) {
     setDuration(e.target.duration);
