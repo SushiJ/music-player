@@ -78,13 +78,6 @@ export function Player() {
     setDuration(e.target.duration);
   }
 
-  //
-  function getTime(time: number) {
-    return (
-      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
-    );
-  }
-
   function handleSkip(direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") {
     if (direction === "SKIP_BACKWARDS") {
       dispatch({ type: "SKIP_BACKWARDS" });
@@ -100,8 +93,15 @@ export function Player() {
   function handleOnEnded() {
     dispatch({ type: "SKIP_FORWARDS" });
     if (isPlaying) {
-      setTimeout(() => audioRef.current?.play(), 300);
+      setTimeout(() => audioRef.current?.play(), 200);
     }
+  }
+
+  //
+  function getTime(time: number) {
+    return (
+      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
+    );
   }
 
   return (
