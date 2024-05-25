@@ -6,9 +6,6 @@ export function Navbar() {
   return (
     <nav className={navbar}>
       <h1 style={{ color: "white" }}>Waves</h1>
-      <span>
-        <ListBulletIcon />
-      </span>
     </nav>
   );
 }
