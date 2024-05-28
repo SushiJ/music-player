@@ -1,16 +1,23 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 
-export const icon = style({
-  height: 40,
-  width: 40,
-  cursor: "pointer",
-  padding: 1,
-  margin: 1,
+export const playerContainer = style({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexGrow: 1,
+  height: "100%",
 });
 
-export const playerContainer = style({
+export const playerCard = style({
   padding: "20px",
   borderRadius: "20px",
+});
+
+export const icon = style({
+  height: 28,
+  width: 28,
+  cursor: "pointer",
+  margin: "0 0.25rem",
 });
 
 export const controls = style({

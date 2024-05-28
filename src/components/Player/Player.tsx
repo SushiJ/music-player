@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ForwardIcon,
-  BackwardIcon,
-  PlayIcon,
-  PauseIcon,
-  SpeakerWaveIcon,
-  SpeakerXMarkIcon,
-} from "@heroicons/react/24/outline";
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+  SpeakerSimpleHigh,
+  SpeakerSimpleX,
+} from "@phosphor-icons/react";
 
-import Audio from "../Audio/Audio";
 import {
   controls,
   icon,
   imageBox,
+  playerCard,
   playerContainer,
   rightSide,
   seek,
@@ -20,9 +20,12 @@ import {
 } from "./player.css";
 import { useAudio } from "../../hooks/AudioContext/AudioContext";
 
+import Audio from "../Audio/Audio";
+
 // TODO:
 // 1. Clean this up a bit (maybe?)
 // 2. need to do style of the input elements and such
+// 3. change VolumeIcon on change of volume
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -105,86 +108,89 @@ export function Player() {
   }
 
   return (
-    <div
-      className={playerContainer}
-      style={{
-        background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
-      }}
-    >
-      <div className={imageBox}>
-        <img
-          style={{ width: "20rem", borderRadius: "0.5rem" }}
-          src={song.cover}
+    <div className={playerContainer}>
+      <div
+        className={playerCard}
+        style={{
+          background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
+        }}
+      >
+        <div className={imageBox}>
+          <img
+            style={{ width: "20rem", borderRadius: "0.5rem" }}
+            src={song.cover}
+          />
+        </div>
+        <div className={rightSide}>
+          <h1>{song.name}</h1>
+          <h4>{song.artist}</h4>
+          <div className={controls}>
+            <SkipBack
+              className={icon}
+              onClick={() => handleSkip("SKIP_BACKWARDS")}
+            />
+            {!isPlaying ? (
+              <Play className={icon} onClick={handlePlay} />
+            ) : (
+              <Pause className={icon} onClick={handlePause} />
+            )}
+            {/* <PlayIcon className={icon} onClick={handlePlay} /> */}
+            <SkipForward
+              className={icon}
+              onClick={() => handleSkip("SKIP_FORWARDS")}
+            />
+          </div>
+          <div className={seek}>
+            <p>{getTime(currentTime)}</p>
+            <input
+              style={{}}
+              value={currentTime}
+              type="range"
+              max={duration.toString()}
+              min={0}
+              onChange={handleSongDrag}
+            />
+            <p>{getTime(duration)}</p>
+          </div>
+          <div className={volumeSlider}>
+            {!muted ? (
+              <span
+                onClick={() => {
+                  setMuted(!muted);
+                  setVolume(0);
+                }}
+              >
+                <SpeakerSimpleHigh className={icon} />
+              </span>
+            ) : (
+              <span
+                onClick={() => {
+                  setMuted(!muted);
+                  setVolume(1);
+                }}
+              >
+                <SpeakerSimpleX className={icon} />
+              </span>
+            )}
+            <input
+              onChange={handleChangeVolume}
+              value={volume}
+              max="1"
+              min="0"
+              step="0.01"
+              type="range"
+            />
+            <p>{(volume * 100).toFixed(0) + "%"}</p>
+          </div>
+        </div>
+        <Audio
+          ref={audioRef}
+          onLoadedData={handleDataLoaded}
+          onTimeUpdate={handleTimeUpdate}
+          onSeek={handleTimeUpdate}
+          onEnded={handleOnEnded}
         />
       </div>
-      <div className={rightSide}>
-        <h1>{song.name}</h1>
-        <h4>{song.artist}</h4>
-        <div className={controls}>
-          <BackwardIcon
-            className={icon}
-            onClick={() => handleSkip("SKIP_BACKWARDS")}
-          />
-          {!isPlaying ? (
-            <PlayIcon className={icon} onClick={handlePlay} />
-          ) : (
-            <PauseIcon className={icon} onClick={handlePause} />
-          )}
-          <ForwardIcon
-            className={icon}
-            onClick={() => handleSkip("SKIP_FORWARDS")}
-          />
-        </div>
-        <div className={seek}>
-          <p>{getTime(currentTime)}</p>
-          <input
-            style={{}}
-            value={currentTime}
-            type="range"
-            max={duration.toString()}
-            min={0}
-            onChange={handleSongDrag}
-          />
-          <p>{getTime(duration)}</p>
-        </div>
-        <div className={volumeSlider}>
-          {!muted ? (
-            <span
-              onClick={() => {
-                setMuted(!muted);
-                setVolume(0);
-              }}
-            >
-              <SpeakerWaveIcon className={icon} />
-            </span>
-          ) : (
-            <span
-              onClick={() => {
-                setMuted(!muted);
-                setVolume(1);
-              }}
-            >
-              <SpeakerXMarkIcon className={icon} />
-            </span>
-          )}
-          <input
-            onChange={handleChangeVolume}
-            value={volume}
-            max="1"
-            min="0"
-            step="0.01"
-            type="range"
-          />
-          <p>{(volume * 100).toFixed(0) + "%"}</p>
-        </div>
-      </div>
-      <Audio
-        ref={audioRef}
-        onLoadedData={handleDataLoaded}
-        onTimeUpdate={handleTimeUpdate}
-        onSeek={handleTimeUpdate}
-        onEnded={handleOnEnded}
-      />
     </div>
   );
 }
