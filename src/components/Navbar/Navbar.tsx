@@ -17,7 +17,7 @@ export function Navbar() {
       <h1>
         <Waveform size={28} />
       </h1>
-      <a href="https://github.com/SushiJ/music-player">
+      <a href="https://github.com/SushiJ/music-player" target="_blank">
         <GithubLogo className={icon} />
       </a>
     </nav>
