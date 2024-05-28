@@ -1,4 +1,4 @@
-import { li } from "./Card.css";
+import { li, smallSize } from "./Card.css";
 
 type Props = {
   name: string;
@@ -6,12 +6,22 @@ type Props = {
   artist: string;
 };
 
-export default function Card(props: Props) {
+export function Card(props: Props) {
   return (
     <li className={li}>
       <img src={props.cover} />
       <p>{props.name}</p>
       <p>{props.artist}</p>
+    </li>
+  );
+}
+
+export function CardSmall(props: Props) {
+  return (
+    <li className={smallSize}>
+      <img src={props.cover} />
+      {/* <p>{props.name}</p> */}
+      {/* <p>{props.artist}</p> */}
     </li>
   );
 }

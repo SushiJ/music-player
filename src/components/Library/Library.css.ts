@@ -1,19 +1,14 @@
 import { style } from "@vanilla-extract/css";
 
+export const smallListContainer = style({
+  overflowY: "auto",
+  height: "100%",
+  // width: "70px",
+  zIndex: "1",
+});
+
 export const listContainer = style({
   overflowY: "auto",
-  position: "absolute",
   height: "100%",
-  left: "-100%",
-});
-
-export const listContainerActive = style({
-  overflowY: "auto",
-  position: "absolute",
-  height: "100%",
-  left: "0",
-});
-
-export const ul = style({
-  overflowY: "auto",
+  zIndex: "1",
 });
