@@ -1,40 +1,25 @@
 import { useLibraryContext } from "../../hooks/LibraryContext";
 import { songList } from "../../utils/data";
-import { Card, CardSmall } from "../Card/Card";
-import { listContainer, smallListContainer } from "./Library.css";
+import { Card } from "../Card/Card";
+import { listContainer, listContainerSmall } from "./Library.css";
 
 export function Library() {
   const { toggle } = useLibraryContext();
   return (
     <>
-      {!toggle ? (
-        <aside className={smallListContainer}>
-          <ul>
-            {songList.map((song) => (
-              <CardSmall
-                key={song.id}
-                name={song.name}
-                cover={song.cover}
-                artist={song.artist}
-              />
-            ))}
-          </ul>
-        </aside>
-      ) : null}
-      {toggle ? (
-        <aside className={listContainer}>
-          <ul>
-            {songList.map((song) => (
-              <Card
-                key={song.id}
-                name={song.name}
-                cover={song.cover}
-                artist={song.artist}
-              />
-            ))}
-          </ul>
-        </aside>
-      ) : null}
+      <aside className={toggle ? listContainer : listContainerSmall}>
+        <ul>
+          {songList.map((song) => (
+            <Card
+              id={song.id}
+              key={song.id}
+              name={song.name}
+              cover={song.cover}
+              artist={song.artist}
+            />
+          ))}
+        </ul>
+      </aside>
     </>
   );
 }

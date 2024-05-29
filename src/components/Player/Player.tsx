@@ -18,7 +18,7 @@ import {
   seek,
   volumeSlider,
 } from "./player.css";
-import { useAudio } from "../../hooks/AudioContext/AudioContext";
+import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 
 import Audio from "../Audio/Audio";
 
@@ -34,7 +34,7 @@ export function Player() {
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
 
-  const { song, dispatch, isPlaying } = useAudio();
+  const { song, dispatch, isPlaying } = useAudioContext();
 
   useEffect(() => {
     if (!audioRef.current) {
