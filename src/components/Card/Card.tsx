@@ -11,11 +11,21 @@ type Props = {
 
 export function Card(props: Props) {
   const { toggle } = useLibraryContext();
-  const { song } = useAudioContext();
+  const { song, dispatch } = useAudioContext();
+
+  function handleClick(id: number) {
+    dispatch({ type: "PLAY_BY_ID", payload: { id } });
+    // TODO: make it play when we click to change the song
+    dispatch({ type: "PAUSE" });
+    setTimeout(() => dispatch({ type: "PLAY" }), 800);
+  }
 
   if (song.id === props.id) {
     return (
-      <li className={toggle ? activeSongLarge : activeSongSmall}>
+      <li
+        className={toggle ? activeSongLarge : activeSongSmall}
+        onClick={() => handleClick(props.id)}
+      >
         <img src={props.cover} />
         <p>{props.name}</p>
         <p>{props.artist}</p>
@@ -24,7 +34,10 @@ export function Card(props: Props) {
   }
 
   return (
-    <li className={toggle ? li : smallSize}>
+    <li
+      className={toggle ? li : smallSize}
+      onClick={() => handleClick(props.id)}
+    >
       <img src={props.cover} />
       <p>{props.name}</p>
       <p>{props.artist}</p>

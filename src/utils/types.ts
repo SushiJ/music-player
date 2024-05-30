@@ -17,4 +17,5 @@ export type AppAction =
   | { type: "SKIP_FORWARDS" }
   | { type: "SKIP_BACKWARDS" }
   | { type: "PLAY" }
-  | { type: "PAUSE" };
+  | { type: "PAUSE" }
+  | { type: "PLAY_BY_ID"; payload: { id: number } };
