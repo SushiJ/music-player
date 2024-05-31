@@ -4,6 +4,7 @@ export const container = style({
   height: "100vh",
   width: "100vw",
   backgroundColor: "#010101",
+  color: "white",
 });
 
 export const content = style({

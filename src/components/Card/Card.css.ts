@@ -83,7 +83,7 @@ globalStyle(`${smallSize} > p `, {
   transition: "all 700ms",
 });
 
-export const li = style({
+export const largeSize = style({
   listStyle: "none",
   margin: "2rem 0",
   padding: "1rem",
@@ -93,14 +93,14 @@ export const li = style({
   textAlign: "center",
 });
 
-globalStyle(`${li} > img `, {
+globalStyle(`${largeSize} > img `, {
   width: "8rem",
   borderRadius: ".25rem",
   WebkitTransition: "all 700ms",
   transition: "all 700ms",
 });
 
-globalStyle(`${li} > p `, {
+globalStyle(`${largeSize} > p `, {
   opacity: 1,
   // fontSize: "large",
   WebkitTransition: "all 700ms",

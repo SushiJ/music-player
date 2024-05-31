@@ -41,7 +41,7 @@ export function Player() {
       throw new Error("Audio ref 404");
     }
     audioRef.current.src = song.audio;
-    audioRef.current.volume = 1;
+    audioRef.current.volume = volume;
   }, [song.audio]);
 
   useEffect(() => {

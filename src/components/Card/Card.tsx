@@ -1,6 +1,11 @@
 import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 import { useLibraryContext } from "../../hooks/LibraryContext";
-import { activeSongLarge, activeSongSmall, li, smallSize } from "./Card.css";
+import {
+  activeSongLarge,
+  activeSongSmall,
+  largeSize,
+  smallSize,
+} from "./Card.css";
 
 type Props = {
   name: string;
@@ -15,9 +20,9 @@ export function Card(props: Props) {
 
   function handleClick(id: number) {
     dispatch({ type: "PLAY_BY_ID", payload: { id } });
-    // TODO: make it play when we click to change the song
+    // TODO: make it play when we click to change the song need to think about this
     dispatch({ type: "PAUSE" });
-    setTimeout(() => dispatch({ type: "PLAY" }), 800);
+    setTimeout(() => dispatch({ type: "PLAY" }), 2000);
   }
 
   if (song.id === props.id) {
@@ -35,7 +40,7 @@ export function Card(props: Props) {
 
   return (
     <li
-      className={toggle ? li : smallSize}
+      className={toggle ? largeSize : smallSize}
       onClick={() => handleClick(props.id)}
     >
       <img src={props.cover} />
