@@ -16,6 +16,7 @@ export const content = style({
   maxWidth: "768px",
   margin: "0 auto",
   padding: "0 2rem",
+  alignContent: "center",
 });
 
 export const main = style({
@@ -23,4 +24,10 @@ export const main = style({
   width: "inherit",
   display: "flex",
   overflowY: "auto",
+
+  "@media": {
+    "screen and (max-width: 1024px)": {
+      flexDirection: "column-reverse",
+    },
+  },
 });

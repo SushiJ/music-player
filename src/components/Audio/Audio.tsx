@@ -10,16 +10,14 @@ type Props = {
 const Audio = forwardRef<HTMLAudioElement, Props>(
   function AudioForwardRef(props, AudioRef) {
     return (
-      <div>
-        <audio
-          ref={AudioRef}
-          preload="metadata"
-          onLoadedData={props.onLoadedData}
-          onTimeUpdate={props.onTimeUpdate}
-          onSeeking={props.onSeek}
-          onEnded={props.onEnded}
-        />
-      </div>
+      <audio
+        ref={AudioRef}
+        preload="auto"
+        onLoadedData={props.onLoadedData}
+        onTimeUpdate={props.onTimeUpdate}
+        onSeeking={props.onSeek}
+        onEnded={props.onEnded}
+      />
     );
   },
 );

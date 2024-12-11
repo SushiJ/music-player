@@ -1,14 +1,14 @@
 import { useLibraryContext } from "../../hooks/LibraryContext";
 import { songList } from "../../utils/data";
 import { Card } from "../Card/Card";
-import { listContainer, listContainerSmall } from "./Library.css";
+import { list, listContainer, listContainerSmall } from "./Library.css";
 
 export function Library() {
   const { toggle } = useLibraryContext();
   return (
     <>
       <aside className={toggle ? listContainer : listContainerSmall}>
-        <ul>
+        <ul className={list}>
           {songList.map((song) => (
             <Card
               id={song.id}

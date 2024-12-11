@@ -51,7 +51,7 @@ globalStyle(`${volumeSlider} > input`, {
 globalStyle(
   `${volumeSlider} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
   {
-    background: "#043a5f",
+    background: "#fafafa",
   },
 );
 
@@ -72,7 +72,7 @@ globalStyle(`${seek} > input`, {
 globalStyle(
   `${seek} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
   {
-    background: "#043a5f",
+    background: "#fafafa",
     marginLeft: "12px",
   },
 );

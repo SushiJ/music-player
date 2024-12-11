@@ -134,7 +134,6 @@ export function Player() {
             ) : (
               <Pause className={icon} onClick={handlePause} />
             )}
-            {/* <PlayIcon className={icon} onClick={handlePlay} /> */}
             <SkipForward
               className={icon}
               onClick={() => handleSkip("SKIP_FORWARDS")}
@@ -143,7 +142,6 @@ export function Player() {
           <div className={seek}>
             <p>{getTime(currentTime)}</p>
             <input
-              style={{}}
               value={currentTime}
               type="range"
               max={duration.toString()}
