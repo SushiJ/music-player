@@ -4,7 +4,6 @@ export const activeSongLarge = style({
   listStyle: "none",
   margin: "2rem 0",
   cursor: "pointer",
-  padding: "1rem 0",
   display: "grid",
   placeItems: "center",
   textAlign: "center",
@@ -29,10 +28,9 @@ globalStyle(`${activeSongLarge} > p `, {
 
 export const activeSongSmall = style({
   listStyle: "none",
-  margin: "2rem 0",
+  margin: "1rem",
   cursor: "pointer",
   padding: "1rem",
-  // maxWidth: "150px",
   display: "grid",
   placeItems: "center",
   textAlign: "center",
@@ -58,10 +56,9 @@ globalStyle(`${activeSongSmall} > p `, {
   transition: "all 700ms",
 });
 
-export const smallSize = style({
+export const SongSmall = style({
   listStyle: "none",
-  margin: "2rem 0",
-  padding: "1rem",
+  margin: "2rem",
   cursor: "pointer",
   maxWidth: "100px",
   display: "grid",
@@ -69,21 +66,21 @@ export const smallSize = style({
   textAlign: "center",
 });
 
-globalStyle(`${smallSize} > img `, {
+globalStyle(`${SongSmall} > img `, {
   width: "6rem",
   borderRadius: ".25rem",
   WebkitTransition: "all 700ms",
   transition: "all 700ms",
 });
 
-globalStyle(`${smallSize} > p `, {
+globalStyle(`${SongSmall} > p `, {
   opacity: 0,
   fontSize: "1px",
   WebkitTransition: "all 700ms",
   transition: "all 700ms",
 });
 
-export const largeSize = style({
+export const SongLarge = style({
   listStyle: "none",
   margin: "2rem 0",
   padding: "1rem",
@@ -93,14 +90,14 @@ export const largeSize = style({
   textAlign: "center",
 });
 
-globalStyle(`${largeSize} > img `, {
+globalStyle(`${SongLarge} > img `, {
   width: "8rem",
   borderRadius: ".25rem",
   WebkitTransition: "all 700ms",
   transition: "all 700ms",
 });
 
-globalStyle(`${largeSize} > p `, {
+globalStyle(`${SongLarge} > p `, {
   opacity: 1,
   // fontSize: "large",
   WebkitTransition: "all 700ms",

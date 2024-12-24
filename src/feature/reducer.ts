@@ -45,11 +45,9 @@ export function audioReducer(state: AppState, action: AppAction) {
       };
     }
     case "PLAY_BY_ID": {
-      const songToPlay = songList.find((song) => song.id === action.payload.id);
-      if (!songToPlay) return state;
       return {
         ...state,
-        song: songToPlay,
+        song: songList[action.payload.id],
       };
     }
     default:

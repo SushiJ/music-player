@@ -3,8 +3,8 @@ import { useLibraryContext } from "../../hooks/LibraryContext";
 import {
   activeSongLarge,
   activeSongSmall,
-  largeSize,
-  smallSize,
+  SongLarge,
+  SongSmall,
 } from "./Card.css";
 
 type Props = {
@@ -16,19 +16,20 @@ type Props = {
 
 export function Card(props: Props) {
   const { toggle } = useLibraryContext();
-  const { song, dispatch } = useAudioContext();
+  const { song, dispatch, isPlaying } = useAudioContext();
 
   function handleClick(id: number) {
-    dispatch({ type: "PLAY_BY_ID", payload: { id } });
     // TODO: make it play when we click to change the song need to think about this
-    dispatch({ type: "PAUSE" });
-    setTimeout(() => dispatch({ type: "PLAY" }), 2000);
+    dispatch({ type: "PLAY_BY_ID", payload: { id } });
   }
 
   if (song.id === props.id) {
     return (
       <li
         className={toggle ? activeSongLarge : activeSongSmall}
+        style={{
+          background: `radial-gradient(circle, ${song.color[0]} 0%, ${song.color[1]} 100%)`,
+        }}
         onClick={() => handleClick(props.id)}
       >
         <img src={props.cover} />
@@ -40,7 +41,7 @@ export function Card(props: Props) {
 
   return (
     <li
-      className={toggle ? largeSize : smallSize}
+      className={toggle ? SongLarge : SongSmall}
       onClick={() => handleClick(props.id)}
     >
       <img src={props.cover} />
