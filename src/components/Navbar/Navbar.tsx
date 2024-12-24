@@ -9,11 +9,11 @@ export function Navbar() {
 
   return (
     <nav className={navbar}>
-      {toggle ? (
-        <TextOutdent className={icon} onClick={() => setToggle(!toggle)} />
-      ) : (
-        <TextIndent className={icon} onClick={() => setToggle(!toggle)} />
-      )}
+      {/* {toggle ? ( */}
+      {/*   <TextOutdent className={icon} onClick={() => setToggle(!toggle)} /> */}
+      {/* ) : ( */}
+      {/*   <TextIndent className={icon} onClick={() => setToggle(!toggle)} /> */}
+      {/* )} */}
       <h1>
         <Waveform size={28} />
       </h1>
