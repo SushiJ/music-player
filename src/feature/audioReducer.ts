@@ -44,12 +44,6 @@ export function audioReducer(state: AppState, action: AppAction) {
         isPlaying: false,
       };
     }
-    case "PLAY_BY_ID": {
-      return {
-        ...state,
-        song: songList[action.payload.id],
-      };
-    }
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import {
   Pause,
   Play,
@@ -18,23 +18,24 @@ import {
   seek,
   volumeSlider,
 } from "./player.css";
-import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 
 import Audio from "../Audio/Audio";
 
-// TODO:
-// 1. Clean this up a bit (maybe?)
-// 2. need to do style of the input elements and such
-// 3. change VolumeIcon on change of volume
+import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
+import { usePlayerContext } from "../../hooks/PlayerContext";
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [volume, setVolume] = useState(1);
-  const [muted, setMuted] = useState<boolean>(false);
-  const [duration, setDuration] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const {
+    volume,
+    duration,
+    currentTime,
+    fullScreen,
+    muted,
+    dispatch: playerDispatch,
+  } = usePlayerContext();
 
-  const { song, dispatch, isPlaying } = useAudioContext();
+  const { song, dispatch: audioDispatch, isPlaying } = useAudioContext();
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -52,41 +53,47 @@ export function Player() {
   // Handlers
   function handlePlay() {
     if (!audioRef.current) return;
-    dispatch({ type: "PLAY" });
+    audioDispatch({ type: "PLAY" });
     audioRef.current.play();
   }
 
   function handlePause() {
     if (!audioRef.current) return;
-    dispatch({ type: "PAUSE" });
+    audioDispatch({ type: "PAUSE" });
     audioRef.current.pause();
   }
 
   function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    setMuted(false);
-    setVolume(e.target.valueAsNumber);
+    playerDispatch({ type: "TOGGLE_MUTE" });
+    playerDispatch({ type: "UPDATE_VOLUME", payload: e.target.valueAsNumber });
   }
 
   function handleSongDrag(e: React.ChangeEvent<HTMLInputElement>) {
     if (!audioRef.current) return;
     audioRef.current.currentTime = e.target.valueAsNumber;
-    setCurrentTime(e.target.valueAsNumber);
+    playerDispatch({
+      type: "UPDATE_CURRENT_TIME",
+      payload: e.target.valueAsNumber,
+    });
   }
 
   function handleTimeUpdate(e: React.ChangeEvent<HTMLAudioElement>) {
-    setCurrentTime(e.target.currentTime);
+    playerDispatch({
+      type: "UPDATE_CURRENT_TIME",
+      payload: e.target.currentTime,
+    });
   }
 
   function handleDataLoaded(e: React.ChangeEvent<HTMLAudioElement>) {
-    setDuration(e.target.duration);
+    playerDispatch({ type: "UPDATE_DURATION", payload: e.target.duration });
   }
 
   function handleSkip(direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") {
     if (direction === "SKIP_BACKWARDS") {
-      dispatch({ type: "SKIP_BACKWARDS" });
+      audioDispatch({ type: "SKIP_BACKWARDS" });
     }
     if (direction === "SKIP_FORWARDS") {
-      dispatch({ type: "SKIP_FORWARDS" });
+      audioDispatch({ type: "SKIP_FORWARDS" });
     }
     if (isPlaying) {
       setTimeout(() => audioRef.current?.play(), 200);
@@ -94,7 +101,7 @@ export function Player() {
   }
 
   function handleOnEnded() {
-    dispatch({ type: "SKIP_FORWARDS" });
+    audioDispatch({ type: "SKIP_FORWARDS" });
     if (isPlaying) {
       setTimeout(() => audioRef.current?.play(), 200);
     }
@@ -108,87 +115,156 @@ export function Player() {
   }
 
   return (
-    <div className={playerContainer}>
-      <div
-        className={playerCard}
-        style={{
-          background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
-        }}
-      >
-        <div className={imageBox}>
-          <img
-            style={{ width: "20rem", borderRadius: "0.5rem" }}
-            src={song.cover}
-          />
-        </div>
-        <div className={rightSide}>
-          <h1>{song.name}</h1>
-          <h4>{song.artist}</h4>
-          <div className={controls}>
-            <SkipBack
-              className={icon}
-              onClick={() => handleSkip("SKIP_BACKWARDS")}
+    <Fragment>
+      {fullScreen ? (
+        <div style={{ width: "100%", position: "relative" }}>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "30%",
+              display: "flex",
+            }}
+          >
+            <img
+              style={{
+                width: "10rem",
+                borderRadius: "0.5rem",
+              }}
+              src={song.cover}
             />
-            {!isPlaying ? (
-              <Play className={icon} onClick={handlePlay} />
-            ) : (
-              <Pause className={icon} onClick={handlePause} />
-            )}
-            <SkipForward
-              className={icon}
-              onClick={() => handleSkip("SKIP_FORWARDS")}
-            />
+            <div
+              style={{
+                marginTop: "auto",
+              }}
+            >
+              <p>{song.name}</p>
+              <p>{song.artist}</p>
+            </div>
           </div>
-          <div className={seek}>
-            <p>{getTime(currentTime)}</p>
-            <input
-              value={currentTime}
-              type="range"
-              max={duration.toString()}
-              min={0}
-              onChange={handleSongDrag}
-            />
-            <p>{getTime(duration)}</p>
-          </div>
-          <div className={volumeSlider}>
-            {!muted ? (
-              <span
-                onClick={() => {
-                  setMuted(!muted);
-                  setVolume(0);
-                }}
-              >
-                <SpeakerSimpleHigh className={icon} />
-              </span>
-            ) : (
-              <span
-                onClick={() => {
-                  setMuted(!muted);
-                  setVolume(1);
-                }}
-              >
-                <SpeakerSimpleX className={icon} />
-              </span>
-            )}
-            <input
-              onChange={handleChangeVolume}
-              value={volume}
-              max="1"
-              min="0"
-              step="0.01"
-              type="range"
-            />
-            <p>{(volume * 100).toFixed(0) + "%"}</p>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              position: "absolute",
+              bottom: "6rem",
+              left: "0",
+            }}
+          >
+            <div
+              style={{ display: "flex", width: "100%", marginBottom: "2rem" }}
+            >
+              <p>{getTime(currentTime)}</p>
+              <input
+                value={currentTime}
+                type="range"
+                max={duration.toString()}
+                min={0}
+                onChange={handleSongDrag}
+                style={{ width: "100%" }}
+              />
+              <p>{getTime(duration)}</p>
+            </div>
+            <div className="">
+              <SkipBack
+                className={icon}
+                onClick={() => handleSkip("SKIP_BACKWARDS")}
+              />
+              {!isPlaying ? (
+                <Play className={icon} onClick={handlePlay} />
+              ) : (
+                <Pause className={icon} onClick={handlePause} />
+              )}
+              <SkipForward
+                className={icon}
+                onClick={() => handleSkip("SKIP_FORWARDS")}
+              />
+            </div>
           </div>
         </div>
-        <Audio
-          ref={audioRef}
-          onLoadedData={handleDataLoaded}
-          onTimeUpdate={handleTimeUpdate}
-          onSeek={handleTimeUpdate}
-          onEnded={handleOnEnded}
-        />
-      </div>
-    </div>
+      ) : (
+        <div className={playerContainer}>
+          <div
+            className={playerCard}
+            style={{
+              background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
+            }}
+          >
+            <div className={imageBox}>
+              <img
+                style={{ width: "20rem", borderRadius: "0.5rem" }}
+                src={song.cover}
+              />
+            </div>
+            <div className={rightSide}>
+              <h1>{song.name}</h1>
+              <h4>{song.artist}</h4>
+              <div className={controls}>
+                <SkipBack
+                  className={icon}
+                  onClick={() => handleSkip("SKIP_BACKWARDS")}
+                />
+                {!isPlaying ? (
+                  <Play className={icon} onClick={handlePlay} />
+                ) : (
+                  <Pause className={icon} onClick={handlePause} />
+                )}
+                <SkipForward
+                  className={icon}
+                  onClick={() => handleSkip("SKIP_FORWARDS")}
+                />
+              </div>
+              <div className={seek}>
+                <p>{getTime(currentTime)}</p>
+                <input
+                  value={currentTime}
+                  type="range"
+                  max={duration.toString()}
+                  min={0}
+                  onChange={handleSongDrag}
+                />
+                <p>{getTime(duration)}</p>
+              </div>
+              <div className={volumeSlider}>
+                {!muted ? (
+                  <span
+                    onClick={() => {
+                      playerDispatch({ type: "SET_MUTE" });
+                    }}
+                  >
+                    <SpeakerSimpleHigh className={icon} />
+                  </span>
+                ) : (
+                  <span
+                    onClick={() => {
+                      playerDispatch({ type: "SET_UNMUTE" });
+                    }}
+                  >
+                    <SpeakerSimpleX className={icon} />
+                  </span>
+                )}
+                <input
+                  onChange={handleChangeVolume}
+                  value={volume}
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  type="range"
+                />
+                <p>{(volume * 100).toFixed(0) + "%"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <Audio
+        ref={audioRef}
+        onLoadedData={handleDataLoaded}
+        onTimeUpdate={handleTimeUpdate}
+        onSeek={handleTimeUpdate}
+        onEnded={handleOnEnded}
+      />
+    </Fragment>
   );
 }
