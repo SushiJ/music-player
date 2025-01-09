@@ -55,6 +55,13 @@ globalStyle(
   },
 );
 
+globalStyle(
+  `${volumeSlider} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
+  {
+    background: "#fafafa",
+  },
+);
+
 export const seek = style({
   display: "flex",
   width: "100%",

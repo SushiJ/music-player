@@ -8,6 +8,10 @@ import {
   SpeakerSimpleX,
 } from "@phosphor-icons/react";
 
+import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
+import { usePlayerContext } from "../../hooks/PlayerContext";
+import Audio from "../Audio/Audio";
+
 import {
   controls,
   icon,
@@ -19,10 +23,9 @@ import {
   volumeSlider,
 } from "./player.css";
 
-import Audio from "../Audio/Audio";
-
-import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
-import { usePlayerContext } from "../../hooks/PlayerContext";
+function getTime(time: number) {
+  return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
+}
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -107,82 +110,27 @@ export function Player() {
     }
   }
 
-  //
-  function getTime(time: number) {
-    return (
-      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
-    );
-  }
-
   return (
     <Fragment>
       {fullScreen ? (
-        <div style={{ width: "100%", position: "relative" }}>
-          <div
-            style={{
-              position: "absolute",
-              bottom: "30%",
-              display: "flex",
-            }}
-          >
-            <img
-              style={{
-                width: "10rem",
-                borderRadius: "0.5rem",
-              }}
-              src={song.cover}
+        <FullscreenContainer>
+          <ImageBox cover_url={song.cover} />
+          <InteractiveInfoContainer>
+            <MetaData name={song.name} artist={song.artist} />
+            <TrackSlider
+              handleDrag={handleSongDrag}
+              currentTime={currentTime}
+              duration={duration}
             />
-            <div
-              style={{
-                marginTop: "auto",
-              }}
-            >
-              <p>{song.name}</p>
-              <p>{song.artist}</p>
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-              position: "absolute",
-              bottom: "6rem",
-              left: "0",
-            }}
-          >
-            <div
-              style={{ display: "flex", width: "100%", marginBottom: "2rem" }}
-            >
-              <p>{getTime(currentTime)}</p>
-              <input
-                value={currentTime}
-                type="range"
-                max={duration.toString()}
-                min={0}
-                onChange={handleSongDrag}
-                style={{ width: "100%" }}
-              />
-              <p>{getTime(duration)}</p>
-            </div>
-            <div className="">
-              <SkipBack
-                className={icon}
-                onClick={() => handleSkip("SKIP_BACKWARDS")}
-              />
-              {!isPlaying ? (
-                <Play className={icon} onClick={handlePlay} />
-              ) : (
-                <Pause className={icon} onClick={handlePause} />
-              )}
-              <SkipForward
-                className={icon}
-                onClick={() => handleSkip("SKIP_FORWARDS")}
-              />
-            </div>
-          </div>
-        </div>
+            <InteractionButtons
+              handlePause={handlePause}
+              handleSkip={handleSkip}
+              handlePlay={handlePause}
+              isPlaying={isPlaying}
+            />
+            <VolumeSlider />
+          </InteractiveInfoContainer>
+        </FullscreenContainer>
       ) : (
         <div className={playerContainer}>
           <div
@@ -266,5 +214,154 @@ export function Player() {
         onEnded={handleOnEnded}
       />
     </Fragment>
+  );
+}
+
+function ImageBox(props: { cover_url: string }) {
+  return (
+    <div style={{ alignSelf: "center" }}>
+      <img
+        style={{
+          borderRadius: "0.5rem",
+        }}
+        src={props.cover_url}
+      />
+    </div>
+  );
+}
+
+function FullscreenContainer(props: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        width: "100%",
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
+
+function Text(props: { str: string }) {
+  return <p>{props.str}</p>;
+}
+
+function MetaData(props: { name: string; artist: string }) {
+  return (
+    <div>
+      <Text str={props.name} />
+      <Text str={props.artist} />
+    </div>
+  );
+}
+
+function TrackSlider(props: {
+  currentTime: number;
+  duration: number;
+  handleDrag: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className={seek}>
+      <p>{getTime(props.currentTime)}</p>
+      <input
+        value={props.currentTime}
+        type="range"
+        max={props.duration.toString()}
+        min={0}
+        onChange={props.handleDrag}
+        style={{ width: "100%" }}
+      />
+      <p>{getTime(props.duration)}</p>
+    </div>
+  );
+}
+
+function InteractiveInfoContainer(props: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
+
+function InteractionButtons(props: {
+  handleSkip: (direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") => void;
+  handlePlay: () => void;
+  handlePause: () => void;
+  isPlaying: boolean;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <SkipBack
+        className={icon}
+        onClick={() => props.handleSkip("SKIP_BACKWARDS")}
+      />
+      {!props.isPlaying ? (
+        <Play className={icon} onClick={props.handlePlay} />
+      ) : (
+        <Pause className={icon} onClick={props.handlePause} />
+      )}
+      <SkipForward
+        className={icon}
+        onClick={() => props.handleSkip("SKIP_FORWARDS")}
+      />
+    </div>
+  );
+}
+
+function VolumeSlider() {
+  const { volume, muted, dispatch: playerDispatch } = usePlayerContext();
+
+  function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
+    playerDispatch({ type: "TOGGLE_MUTE" });
+    playerDispatch({ type: "UPDATE_VOLUME", payload: e.target.valueAsNumber });
+  }
+
+  return (
+    <div className={volumeSlider}>
+      {!muted ? (
+        <span
+          onClick={() => {
+            playerDispatch({ type: "SET_MUTE" });
+          }}
+        >
+          <SpeakerSimpleHigh
+            className={icon}
+            style={{ height: "16px", width: "16px" }}
+          />
+        </span>
+      ) : (
+        <span
+          onClick={() => {
+            playerDispatch({ type: "SET_UNMUTE" });
+          }}
+        >
+          <SpeakerSimpleX className={icon} />
+        </span>
+      )}
+      <input
+        onChange={handleChangeVolume}
+        value={volume}
+        max="1"
+        min="0"
+        step="0.01"
+        type="range"
+      />
+      <Text str={(volume * 100).toFixed(0) + "%"} />
+    </div>
   );
 }

@@ -20,7 +20,7 @@ export const initialState = {
   muted: false,
   duration: 0,
   currentTime: 0,
-  fullScreen: false,
+  fullScreen: true,
   dispatch: () => {},
 };
 
