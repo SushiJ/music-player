@@ -17,11 +17,18 @@ import {
   icon,
   imageBox,
   playerCard,
-  playerContainer,
   rightSide,
   seek,
   volumeSlider,
 } from "./player.css";
+
+import {
+  Container,
+  FullscreenContainer,
+  InteractiveInfoContainer,
+} from "../Layout/container";
+import { TrackSlider, VolumeSlider } from "./slider";
+import { Text } from "./text";
 
 function getTime(time: number) {
   return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
@@ -132,79 +139,32 @@ export function Player() {
           </InteractiveInfoContainer>
         </FullscreenContainer>
       ) : (
-        <div className={playerContainer}>
-          <div
-            className={playerCard}
-            style={{
-              background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
-            }}
-          >
-            <div className={imageBox}>
-              <img
-                style={{ width: "20rem", borderRadius: "0.5rem" }}
-                src={song.cover}
+        <Container>
+          <Card color={song.color}>
+            <CardImage cover_url={song.cover} />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <MetaData artist={song.artist} name={song.name} />
+              <InteractionButtons
+                isPlaying={isPlaying}
+                handlePlay={handlePlay}
+                handleSkip={handleSkip}
+                handlePause={handlePause}
               />
+              <TrackSlider
+                handleDrag={handleSongDrag}
+                currentTime={currentTime}
+                duration={duration}
+              />
+              <VolumeSlider />
             </div>
-            <div className={rightSide}>
-              <h1>{song.name}</h1>
-              <h4>{song.artist}</h4>
-              <div className={controls}>
-                <SkipBack
-                  className={icon}
-                  onClick={() => handleSkip("SKIP_BACKWARDS")}
-                />
-                {!isPlaying ? (
-                  <Play className={icon} onClick={handlePlay} />
-                ) : (
-                  <Pause className={icon} onClick={handlePause} />
-                )}
-                <SkipForward
-                  className={icon}
-                  onClick={() => handleSkip("SKIP_FORWARDS")}
-                />
-              </div>
-              <div className={seek}>
-                <p>{getTime(currentTime)}</p>
-                <input
-                  value={currentTime}
-                  type="range"
-                  max={duration.toString()}
-                  min={0}
-                  onChange={handleSongDrag}
-                />
-                <p>{getTime(duration)}</p>
-              </div>
-              <div className={volumeSlider}>
-                {!muted ? (
-                  <span
-                    onClick={() => {
-                      playerDispatch({ type: "SET_MUTE" });
-                    }}
-                  >
-                    <SpeakerSimpleHigh className={icon} />
-                  </span>
-                ) : (
-                  <span
-                    onClick={() => {
-                      playerDispatch({ type: "SET_UNMUTE" });
-                    }}
-                  >
-                    <SpeakerSimpleX className={icon} />
-                  </span>
-                )}
-                <input
-                  onChange={handleChangeVolume}
-                  value={volume}
-                  max="1"
-                  min="0"
-                  step="0.01"
-                  type="range"
-                />
-                <p>{(volume * 100).toFixed(0) + "%"}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          </Card>
+        </Container>
       )}
       <Audio
         ref={audioRef}
@@ -230,65 +190,11 @@ function ImageBox(props: { cover_url: string }) {
   );
 }
 
-function FullscreenContainer(props: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        width: "100%",
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
-
-function Text(props: { str: string }) {
-  return <p>{props.str}</p>;
-}
-
 function MetaData(props: { name: string; artist: string }) {
   return (
     <div>
-      <Text str={props.name} />
-      <Text str={props.artist} />
-    </div>
-  );
-}
-
-function TrackSlider(props: {
-  currentTime: number;
-  duration: number;
-  handleDrag: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <div className={seek}>
-      <p>{getTime(props.currentTime)}</p>
-      <input
-        value={props.currentTime}
-        type="range"
-        max={props.duration.toString()}
-        min={0}
-        onChange={props.handleDrag}
-        style={{ width: "100%" }}
-      />
-      <p>{getTime(props.duration)}</p>
-    </div>
-  );
-}
-
-function InteractiveInfoContainer(props: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-      }}
-    >
-      {props.children}
+      <h2>{props.name}</h2>
+      <h4>{props.artist}</h4>
     </div>
   );
 }
@@ -323,45 +229,26 @@ function InteractionButtons(props: {
   );
 }
 
-function VolumeSlider() {
-  const { volume, muted, dispatch: playerDispatch } = usePlayerContext();
-
-  function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    playerDispatch({ type: "TOGGLE_MUTE" });
-    playerDispatch({ type: "UPDATE_VOLUME", payload: e.target.valueAsNumber });
-  }
-
+function CardImage(props: { cover_url: string }) {
   return (
-    <div className={volumeSlider}>
-      {!muted ? (
-        <span
-          onClick={() => {
-            playerDispatch({ type: "SET_MUTE" });
-          }}
-        >
-          <SpeakerSimpleHigh
-            className={icon}
-            style={{ height: "16px", width: "16px" }}
-          />
-        </span>
-      ) : (
-        <span
-          onClick={() => {
-            playerDispatch({ type: "SET_UNMUTE" });
-          }}
-        >
-          <SpeakerSimpleX className={icon} />
-        </span>
-      )}
-      <input
-        onChange={handleChangeVolume}
-        value={volume}
-        max="1"
-        min="0"
-        step="0.01"
-        type="range"
+    <div className={imageBox}>
+      <img
+        style={{ width: "20rem", borderRadius: "0.5rem" }}
+        src={props.cover_url}
       />
-      <Text str={(volume * 100).toFixed(0) + "%"} />
+    </div>
+  );
+}
+
+function Card(props: { children: React.ReactNode; color: Array<string> }) {
+  return (
+    <div
+      className={playerCard}
+      style={{
+        background: `linear-gradient(145deg, ${props.color[0]}, ${props.color[1]})`,
+      }}
+    >
+      {props.children}
     </div>
   );
 }

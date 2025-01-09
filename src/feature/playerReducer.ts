@@ -20,8 +20,8 @@ export const initialState = {
   muted: false,
   duration: 0,
   currentTime: 0,
-  fullScreen: true,
-  dispatch: () => {},
+  fullScreen: false,
+  dispatch: () => { },
 };
 
 export function playerReducer(state: AppState, action: AppAction) {
