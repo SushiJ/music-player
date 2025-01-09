@@ -1,19 +1,16 @@
-import { GithubLogo, TextOutdent, Waveform } from "@phosphor-icons/react";
+import { GithubLogo, Waveform } from "@phosphor-icons/react";
 import { TextIndent } from "@phosphor-icons/react/dist/ssr";
 import { useLibraryContext } from "../../hooks/LibraryContext";
+import { usePlayerContext } from "../../hooks/PlayerContext";
 import { icon } from "./navbar.css";
 import { navbar } from "./navbar.css";
 
 export function Navbar() {
-  const { toggle, setToggle } = useLibraryContext();
+  const { fullScreen } = usePlayerContext();
 
+  if (fullScreen) return;
   return (
     <nav className={navbar}>
-      {/* {toggle ? ( */}
-      {/*   <TextOutdent className={icon} onClick={() => setToggle(!toggle)} /> */}
-      {/* ) : ( */}
-      {/*   <TextIndent className={icon} onClick={() => setToggle(!toggle)} /> */}
-      {/* )} */}
       <h1>
         <Waveform size={28} />
       </h1>
