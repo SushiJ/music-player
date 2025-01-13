@@ -1,4 +1,4 @@
-import { globalStyle, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 
 export const playerContainer = style({
   display: "flex",
@@ -31,7 +31,20 @@ export const rightSide = style({
   color: "white",
 });
 
-export const imageBox = style({});
+export const imageBox = style({
+  position: "relative",
+});
+
+globalStyle(`${imageBox} > button`, {
+  position: "absolute",
+  bottom: 0,
+  right: 0,
+  background: "none",
+  border: "none",
+  color: "white",
+  padding: "0.5rem 0.5rem",
+  cursor: "pointer",
+});
 
 export const volumeSlider = style({
   display: "flex",
@@ -87,4 +100,23 @@ globalStyle(
 globalStyle(`${seek} > p:first-of-type, p`, {
   marginLeft: "6px",
   marginRight: "6px",
+});
+
+const shimmer = keyframes({
+  "0%": {
+    background: "rgba(255, 255, 255, 0)",
+  },
+  "50%": {
+    background: "rgba(255, 255, 255, 0.3)",
+  },
+  "100%": {
+    background: "rgba(255, 255, 255, 0)",
+  },
+});
+
+export const skeleton = style({
+  height: "25rem",
+  width: "25rem",
+  animation: `${shimmer} 2.5s infinite`,
+  borderRadius: "0.5rem",
 });

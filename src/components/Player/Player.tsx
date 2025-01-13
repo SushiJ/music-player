@@ -1,47 +1,35 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Pause,
   Play,
   SkipBack,
   SkipForward,
-  SpeakerSimpleHigh,
-  SpeakerSimpleX,
+  CornersOut,
 } from "@phosphor-icons/react";
 
 import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 import { usePlayerContext } from "../../hooks/PlayerContext";
 import Audio from "../Audio/Audio";
 
-import {
-  controls,
-  icon,
-  imageBox,
-  playerCard,
-  rightSide,
-  seek,
-  volumeSlider,
-} from "./player.css";
+import { icon, imageBox, playerCard, skeleton } from "./player.css";
 
 import {
   Container,
   FullscreenContainer,
   InteractiveInfoContainer,
 } from "../Layout/container";
-import { TrackSlider, VolumeSlider } from "./slider";
-import { Text } from "./text";
 
-function getTime(time: number) {
-  return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
-}
+import { TrackSlider, VolumeSlider } from "./slider";
+import { CornersIn } from "@phosphor-icons/react/dist/ssr";
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const {
     volume,
     duration,
     currentTime,
     fullScreen,
-    muted,
     dispatch: playerDispatch,
   } = usePlayerContext();
 
@@ -71,11 +59,6 @@ export function Player() {
     if (!audioRef.current) return;
     audioDispatch({ type: "PAUSE" });
     audioRef.current.pause();
-  }
-
-  function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    playerDispatch({ type: "TOGGLE_MUTE" });
-    playerDispatch({ type: "UPDATE_VOLUME", payload: e.target.valueAsNumber });
   }
 
   function handleSongDrag(e: React.ChangeEvent<HTMLInputElement>) {
@@ -123,17 +106,17 @@ export function Player() {
         <FullscreenContainer>
           <ImageBox cover_url={song.cover} />
           <InteractiveInfoContainer>
-            <MetaData name={song.name} artist={song.artist} />
-            <TrackSlider
-              handleDrag={handleSongDrag}
-              currentTime={currentTime}
-              duration={duration}
-            />
+            <SongDetails name={song.name} artist={song.artist} />
             <InteractionButtons
               handlePause={handlePause}
               handleSkip={handleSkip}
               handlePlay={handlePause}
               isPlaying={isPlaying}
+            />
+            <TrackSlider
+              handleDrag={handleSongDrag}
+              currentTime={currentTime}
+              duration={duration}
             />
             <VolumeSlider />
           </InteractiveInfoContainer>
@@ -149,7 +132,7 @@ export function Player() {
                 alignItems: "center",
               }}
             >
-              <MetaData artist={song.artist} name={song.name} />
+              <SongDetails artist={song.artist} name={song.name} />
               <InteractionButtons
                 isPlaying={isPlaying}
                 handlePlay={handlePlay}
@@ -178,21 +161,44 @@ export function Player() {
 }
 
 function ImageBox(props: { cover_url: string }) {
+  const { dispatch, fullScreen } = usePlayerContext();
+
   return (
-    <div style={{ alignSelf: "center" }}>
+    <div style={{ alignSelf: "center", position: "relative" }}>
       <img
         style={{
           borderRadius: "0.5rem",
         }}
         src={props.cover_url}
       />
+      <button
+        style={{
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+          padding: "0.5rem 0.5rem",
+          background: "none",
+          border: "none",
+          color: "white",
+          cursor: "pointer",
+        }}
+        onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}
+      >
+        {fullScreen && <CornersIn size={24} />}
+      </button>
     </div>
   );
 }
 
-function MetaData(props: { name: string; artist: string }) {
+function SongDetails(props: { name: string; artist: string }) {
   return (
-    <div>
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "1rem",
+        marginBottom: "1rem",
+      }}
+    >
       <h2>{props.name}</h2>
       <h4>{props.artist}</h4>
     </div>
@@ -230,12 +236,37 @@ function InteractionButtons(props: {
 }
 
 function CardImage(props: { cover_url: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { dispatch, fullScreen } = usePlayerContext();
+
+  function handleImageLoad() {
+    setIsLoading(false);
+  }
+
   return (
     <div className={imageBox}>
+      {isLoading && (
+        <div
+          style={{
+            width: "25rem",
+            height: "25rem",
+          }}
+          className={skeleton}
+        />
+      )}
       <img
-        style={{ width: "20rem", borderRadius: "0.5rem" }}
+        onLoad={handleImageLoad}
+        style={{
+          width: "25rem",
+          borderRadius: "0.5rem",
+          display: isLoading ? "none" : "block",
+        }}
         src={props.cover_url}
       />
+      <button onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}>
+        {!fullScreen && <CornersOut size={24} />}
+      </button>
     </div>
   );
 }
