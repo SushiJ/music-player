@@ -11,12 +11,12 @@ import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 import { usePlayerContext } from "../../hooks/PlayerContext";
 import Audio from "../Audio/Audio";
 
-import { icon, imageBox, playerCard, skeleton } from "./player.css";
+import { icon, imageBox, cardSmall, skeleton } from "./player.css";
 
 import {
   Container,
   FullscreenContainer,
-  InteractiveInfoContainer,
+  InteractiveInfoContainer as FullscreenContainerBody,
 } from "../Layout/container";
 
 import { TrackSlider, VolumeSlider } from "./slider";
@@ -105,7 +105,7 @@ export function Player() {
       {fullScreen ? (
         <FullscreenContainer>
           <ImageBox cover_url={song.cover} />
-          <InteractiveInfoContainer>
+          <FullscreenContainerBody>
             <SongDetails name={song.name} artist={song.artist} />
             <InteractionButtons
               handlePause={handlePause}
@@ -119,19 +119,13 @@ export function Player() {
               duration={duration}
             />
             <VolumeSlider />
-          </InteractiveInfoContainer>
+          </FullscreenContainerBody>
         </FullscreenContainer>
       ) : (
         <Container>
           <Card color={song.color}>
             <CardImage cover_url={song.cover} />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
+            <CardBody>
               <SongDetails artist={song.artist} name={song.name} />
               <InteractionButtons
                 isPlaying={isPlaying}
@@ -145,7 +139,7 @@ export function Player() {
                 duration={duration}
               />
               <VolumeSlider />
-            </div>
+            </CardBody>
           </Card>
         </Container>
       )}
@@ -235,6 +229,19 @@ function InteractionButtons(props: {
   );
 }
 
+function Card(props: { children: React.ReactNode; color: Array<string> }) {
+  return (
+    <div
+      className={cardSmall}
+      style={{
+        background: `linear-gradient(145deg, ${props.color[0]}, ${props.color[1]})`,
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
+
 function CardImage(props: { cover_url: string }) {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -271,12 +278,13 @@ function CardImage(props: { cover_url: string }) {
   );
 }
 
-function Card(props: { children: React.ReactNode; color: Array<string> }) {
+function CardBody(props: { children: React.ReactNode }) {
   return (
     <div
-      className={playerCard}
       style={{
-        background: `linear-gradient(145deg, ${props.color[0]}, ${props.color[1]})`,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
       {props.children}
