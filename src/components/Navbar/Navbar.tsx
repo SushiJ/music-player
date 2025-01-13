@@ -1,6 +1,4 @@
 import { GithubLogo, Waveform } from "@phosphor-icons/react";
-import { TextIndent } from "@phosphor-icons/react/dist/ssr";
-import { useLibraryContext } from "../../hooks/LibraryContext";
 import { usePlayerContext } from "../../hooks/PlayerContext";
 import { icon } from "./navbar.css";
 import { navbar } from "./navbar.css";
@@ -8,7 +6,7 @@ import { navbar } from "./navbar.css";
 export function Navbar() {
   const { fullScreen } = usePlayerContext();
 
-  if (fullScreen) return;
+  if (fullScreen) return null;
   return (
     <nav className={navbar}>
       <h1>
