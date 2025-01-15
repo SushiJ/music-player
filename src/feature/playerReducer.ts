@@ -77,13 +77,6 @@ export function playerReducer(state: AppState, action: AppAction) {
       };
     }
 
-    case "TOGGLE_FULLSCREN": {
-      return {
-        ...state,
-        fullScreen: !state.fullScreen,
-      };
-    }
-
     default:
       return state;
   }
