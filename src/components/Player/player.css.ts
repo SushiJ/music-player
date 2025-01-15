@@ -33,6 +33,11 @@ globalStyle(`${imageBox} > button`, {
   color: "white",
   padding: "0.5rem 0.5rem",
   cursor: "pointer",
+  transition: "scale 0.15s ease",
+});
+
+globalStyle(`${imageBox} > button:hover`, {
+  scale: "1.2",
 });
 
 export const volumeSlider = style({
@@ -108,4 +113,32 @@ export const skeleton = style({
   width: "25rem",
   animation: `${shimmer} 2.5s infinite`,
   borderRadius: "0.5rem",
+  boxShadow: "0px 0px 10px 10px rgba(0,0,0,0.15)",
+});
+
+export const ImageBoxLarge = style({
+  alignSelf: "center",
+  position: "relative",
+});
+
+globalStyle(`${ImageBoxLarge} > img`, {
+  boxShadow: "0px 0px 10px 10px rgba(0,0,0,0.15)",
+  borderRadius: "0.5rem",
+  maxHeight: "400px",
+});
+
+globalStyle(`${ImageBoxLarge} > button`, {
+  position: "absolute",
+  bottom: 0,
+  right: 0,
+  padding: "0.5rem 0.5rem",
+  background: "none",
+  border: "none",
+  color: "white",
+  cursor: "pointer",
+  transition: "scale 0.15s ease",
+});
+
+globalStyle(`${ImageBoxLarge} > button:hover`, {
+  scale: ".9",
 });

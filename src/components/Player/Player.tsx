@@ -11,7 +11,13 @@ import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
 import { usePlayerContext } from "../../hooks/PlayerContext";
 import Audio from "../Audio/Audio";
 
-import { icon, imageBox, cardSmall, skeleton } from "./player.css";
+import {
+  icon,
+  imageBox,
+  cardSmall,
+  skeleton,
+  ImageBoxLarge,
+} from "./player.css";
 
 import {
   Container,
@@ -158,26 +164,9 @@ function ImageBox(props: { cover_url: string }) {
   const { dispatch, fullScreen } = usePlayerContext();
 
   return (
-    <div style={{ alignSelf: "center", position: "relative" }}>
-      <img
-        style={{
-          borderRadius: "0.5rem",
-        }}
-        src={props.cover_url}
-      />
-      <button
-        style={{
-          position: "absolute",
-          bottom: 0,
-          right: 0,
-          padding: "0.5rem 0.5rem",
-          background: "none",
-          border: "none",
-          color: "white",
-          cursor: "pointer",
-        }}
-        onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}
-      >
+    <div className={ImageBoxLarge}>
+      <img src={props.cover_url} />
+      <button onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}>
         {fullScreen && <CornersIn size={24} />}
       </button>
     </div>
@@ -268,6 +257,7 @@ function CardImage(props: { cover_url: string }) {
           width: "25rem",
           borderRadius: "0.5rem",
           display: isLoading ? "none" : "block",
+          boxShadow: "0px 0px 5px 5px rgba(0,0,0,0.75)",
         }}
         src={props.cover_url}
       />
