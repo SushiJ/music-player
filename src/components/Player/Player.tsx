@@ -242,24 +242,11 @@ function CardImage(props: { cover_url: string }) {
 
   return (
     <div className={imageBox}>
-      {isLoading && (
-        <div
-          style={{
-            width: "25rem",
-            height: "25rem",
-          }}
-          className={skeleton}
-        />
-      )}
+      {isLoading && <div className={skeleton} />}
       <img
         onLoad={handleImageLoad}
-        style={{
-          width: "25rem",
-          borderRadius: "0.5rem",
-          display: isLoading ? "none" : "block",
-          boxShadow: "0px 0px 5px 5px rgba(0,0,0,0.75)",
-        }}
         src={props.cover_url}
+        style={{ display: isLoading ? "none" : "block" }}
       />
       <button onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}>
         {!fullScreen && <CornersOut size={24} />}

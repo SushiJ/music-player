@@ -40,6 +40,12 @@ globalStyle(`${imageBox} > button:hover`, {
   scale: "1.2",
 });
 
+globalStyle(`${imageBox} > img`, {
+  width: "25rem",
+  borderRadius: "0.5rem",
+  boxShadow: "0px 0px 5px 5px rgba(0,0,0,0.25)",
+});
+
 export const volumeSlider = style({
   display: "flex",
   justifyItems: "center",
