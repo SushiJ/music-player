@@ -4,7 +4,7 @@ import {
   type AppAction,
   initialState,
   playerReducer,
-} from "../feature/playerReducer";
+} from "../../feature/playerReducer";
 
 type PlayerContext = {
   volume: number;
