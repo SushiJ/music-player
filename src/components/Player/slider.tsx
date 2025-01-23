@@ -34,7 +34,6 @@ export function VolumeSlider() {
   const { volume, muted, dispatch: playerDispatch } = usePlayerContext();
 
   function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    playerDispatch({ type: "TOGGLE_MUTE" });
     playerDispatch({ type: "UPDATE_VOLUME", payload: e.target.valueAsNumber });
   }
 
@@ -48,7 +47,6 @@ export function VolumeSlider() {
         >
           <SpeakerSimpleHigh
             className={icon}
-            style={{ height: "16px", width: "16px" }}
           />
         </span>
       ) : (
