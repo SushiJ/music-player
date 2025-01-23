@@ -1,40 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Pause,
   Play,
   SkipBack,
   SkipForward,
-  SpeakerSimpleHigh,
-  SpeakerSimpleX,
+  CornersOut,
 } from "@phosphor-icons/react";
 
-import {
-  controls,
-  icon,
-  imageBox,
-  playerCard,
-  playerContainer,
-  rightSide,
-  seek,
-  volumeSlider,
-} from "./player.css";
 import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
-
+import { usePlayerContext } from "../../hooks/PlayerContext";
 import Audio from "../Audio/Audio";
 
-// TODO:
-// 1. Clean this up a bit (maybe?)
-// 2. need to do style of the input elements and such
-// 3. change VolumeIcon on change of volume
+import {
+  icon,
+  imageBox,
+  cardSmall,
+  skeleton,
+  ImageBoxLarge,
+} from "./player.css";
+
+import {
+  Container,
+  FullscreenContainer,
+  InteractiveInfoContainer as FullscreenContainerBody,
+} from "../Layout/container";
+
+import { TrackSlider, VolumeSlider } from "./slider";
+import { CornersIn } from "@phosphor-icons/react/dist/ssr";
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [volume, setVolume] = useState(1);
-  const [muted, setMuted] = useState<boolean>(false);
-  const [duration, setDuration] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<number>(0);
 
-  const { song, dispatch, isPlaying } = useAudioContext();
+  const {
+    volume,
+    duration,
+    currentTime,
+    fullScreen,
+    dispatch: playerDispatch,
+  } = usePlayerContext();
+
+  const { song, dispatch: audioDispatch, isPlaying } = useAudioContext();
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -52,41 +57,42 @@ export function Player() {
   // Handlers
   function handlePlay() {
     if (!audioRef.current) return;
-    dispatch({ type: "PLAY" });
+    audioDispatch({ type: "PLAY" });
     audioRef.current.play();
   }
 
   function handlePause() {
     if (!audioRef.current) return;
-    dispatch({ type: "PAUSE" });
+    audioDispatch({ type: "PAUSE" });
     audioRef.current.pause();
-  }
-
-  function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    setMuted(false);
-    setVolume(e.target.valueAsNumber);
   }
 
   function handleSongDrag(e: React.ChangeEvent<HTMLInputElement>) {
     if (!audioRef.current) return;
     audioRef.current.currentTime = e.target.valueAsNumber;
-    setCurrentTime(e.target.valueAsNumber);
+    playerDispatch({
+      type: "UPDATE_CURRENT_TIME",
+      payload: e.target.valueAsNumber,
+    });
   }
 
   function handleTimeUpdate(e: React.ChangeEvent<HTMLAudioElement>) {
-    setCurrentTime(e.target.currentTime);
+    playerDispatch({
+      type: "UPDATE_CURRENT_TIME",
+      payload: e.target.currentTime,
+    });
   }
 
   function handleDataLoaded(e: React.ChangeEvent<HTMLAudioElement>) {
-    setDuration(e.target.duration);
+    playerDispatch({ type: "UPDATE_DURATION", payload: e.target.duration });
   }
 
   function handleSkip(direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") {
     if (direction === "SKIP_BACKWARDS") {
-      dispatch({ type: "SKIP_BACKWARDS" });
+      audioDispatch({ type: "SKIP_BACKWARDS" });
     }
     if (direction === "SKIP_FORWARDS") {
-      dispatch({ type: "SKIP_FORWARDS" });
+      audioDispatch({ type: "SKIP_FORWARDS" });
     }
     if (isPlaying) {
       setTimeout(() => audioRef.current?.play(), 200);
@@ -94,101 +100,171 @@ export function Player() {
   }
 
   function handleOnEnded() {
-    dispatch({ type: "SKIP_FORWARDS" });
+    audioDispatch({ type: "SKIP_FORWARDS" });
     if (isPlaying) {
       setTimeout(() => audioRef.current?.play(), 200);
     }
   }
 
-  //
-  function getTime(time: number) {
-    return (
-      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
-    );
+  return (
+    <Fragment>
+      {fullScreen ? (
+        <FullscreenContainer>
+          <ImageBox cover_url={song.cover} />
+          <FullscreenContainerBody>
+            <SongDetails name={song.name} artist={song.artist} />
+            <InteractionButtons
+              handlePause={handlePause}
+              handleSkip={handleSkip}
+              handlePlay={handlePause}
+              isPlaying={isPlaying}
+            />
+            <TrackSlider
+              handleDrag={handleSongDrag}
+              currentTime={currentTime}
+              duration={duration}
+            />
+            <VolumeSlider />
+          </FullscreenContainerBody>
+        </FullscreenContainer>
+      ) : (
+        <Container>
+          <Card color={song.color}>
+            <CardImage cover_url={song.cover} />
+            <CardBody>
+              <SongDetails artist={song.artist} name={song.name} />
+              <InteractionButtons
+                isPlaying={isPlaying}
+                handlePlay={handlePlay}
+                handleSkip={handleSkip}
+                handlePause={handlePause}
+              />
+              <TrackSlider
+                handleDrag={handleSongDrag}
+                currentTime={currentTime}
+                duration={duration}
+              />
+              <VolumeSlider />
+            </CardBody>
+          </Card>
+        </Container>
+      )}
+      <Audio
+        ref={audioRef}
+        onLoadedData={handleDataLoaded}
+        onTimeUpdate={handleTimeUpdate}
+        onSeek={handleTimeUpdate}
+        onEnded={handleOnEnded}
+      />
+    </Fragment>
+  );
+}
+
+function ImageBox(props: { cover_url: string }) {
+  const { dispatch, fullScreen } = usePlayerContext();
+
+  return (
+    <div className={ImageBoxLarge}>
+      <img src={props.cover_url} />
+      <button onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}>
+        {fullScreen && <CornersIn size={24} />}
+      </button>
+    </div>
+  );
+}
+
+function SongDetails(props: { name: string; artist: string }) {
+  return (
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "1rem",
+        marginBottom: "1rem",
+      }}
+    >
+      <h2>{props.name}</h2>
+      <h4>{props.artist}</h4>
+    </div>
+  );
+}
+
+function InteractionButtons(props: {
+  handleSkip: (direction: "SKIP_BACKWARDS" | "SKIP_FORWARDS") => void;
+  handlePlay: () => void;
+  handlePause: () => void;
+  isPlaying: boolean;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <SkipBack
+        className={icon}
+        onClick={() => props.handleSkip("SKIP_BACKWARDS")}
+      />
+      {!props.isPlaying ? (
+        <Play className={icon} onClick={props.handlePlay} />
+      ) : (
+        <Pause className={icon} onClick={props.handlePause} />
+      )}
+      <SkipForward
+        className={icon}
+        onClick={() => props.handleSkip("SKIP_FORWARDS")}
+      />
+    </div>
+  );
+}
+
+function Card(props: { children: React.ReactNode; color: Array<string> }) {
+  return (
+    <div
+      className={cardSmall}
+      style={{
+        background: `linear-gradient(145deg, ${props.color[0]}, ${props.color[1]})`,
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
+
+function CardImage(props: { cover_url: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { dispatch, fullScreen } = usePlayerContext();
+
+  function handleImageLoad() {
+    setIsLoading(false);
   }
 
   return (
-    <div className={playerContainer}>
-      <div
-        className={playerCard}
-        style={{
-          background: `linear-gradient(145deg, ${song.color[0]}, ${song.color[1]})`,
-        }}
-      >
-        <div className={imageBox}>
-          <img
-            style={{ width: "20rem", borderRadius: "0.5rem" }}
-            src={song.cover}
-          />
-        </div>
-        <div className={rightSide}>
-          <h1>{song.name}</h1>
-          <h4>{song.artist}</h4>
-          <div className={controls}>
-            <SkipBack
-              className={icon}
-              onClick={() => handleSkip("SKIP_BACKWARDS")}
-            />
-            {!isPlaying ? (
-              <Play className={icon} onClick={handlePlay} />
-            ) : (
-              <Pause className={icon} onClick={handlePause} />
-            )}
-            <SkipForward
-              className={icon}
-              onClick={() => handleSkip("SKIP_FORWARDS")}
-            />
-          </div>
-          <div className={seek}>
-            <p>{getTime(currentTime)}</p>
-            <input
-              value={currentTime}
-              type="range"
-              max={duration.toString()}
-              min={0}
-              onChange={handleSongDrag}
-            />
-            <p>{getTime(duration)}</p>
-          </div>
-          <div className={volumeSlider}>
-            {!muted ? (
-              <span
-                onClick={() => {
-                  setMuted(!muted);
-                  setVolume(0);
-                }}
-              >
-                <SpeakerSimpleHigh className={icon} />
-              </span>
-            ) : (
-              <span
-                onClick={() => {
-                  setMuted(!muted);
-                  setVolume(1);
-                }}
-              >
-                <SpeakerSimpleX className={icon} />
-              </span>
-            )}
-            <input
-              onChange={handleChangeVolume}
-              value={volume}
-              max="1"
-              min="0"
-              step="0.01"
-              type="range"
-            />
-            <p>{(volume * 100).toFixed(0) + "%"}</p>
-          </div>
-        </div>
-        <Audio
-          ref={audioRef}
-          onLoadedData={handleDataLoaded}
-          onTimeUpdate={handleTimeUpdate}
-          onSeek={handleTimeUpdate}
-          onEnded={handleOnEnded}
-        />
-      </div>
+    <div className={imageBox}>
+      {isLoading && <div className={skeleton} />}
+      <img
+        onLoad={handleImageLoad}
+        src={props.cover_url}
+        style={{ display: isLoading ? "none" : "block" }}
+      />
+      <button onClick={() => dispatch({ type: "TOGGLE_FULLSCREN" })}>
+        {!fullScreen && <CornersOut size={24} />}
+      </button>
+    </div>
+  );
+}
+
+function CardBody(props: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      {props.children}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { audioReducer, initialState } from "../../feature/reducer";
+import { audioReducer, initialState } from "../../feature/audioReducer";
 import React from "react";
 import type { AppAction, Song } from "../../utils/types";
 

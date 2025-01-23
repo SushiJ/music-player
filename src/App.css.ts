@@ -24,10 +24,4 @@ export const main = style({
   width: "inherit",
   display: "flex",
   overflowY: "auto",
-
-  "@media": {
-    "screen and (max-width: 1024px)": {
-      flexDirection: "column-reverse",
-    },
-  },
 });
