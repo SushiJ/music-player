@@ -42,6 +42,10 @@ export function Player() {
   const { song, dispatch: audioDispatch, isPlaying } = useAudioContext();
 
   useEffect(() => {
+    document.title = song.name;
+  }, [song.name]);
+
+  useEffect(() => {
     if (!audioRef.current) {
       throw new Error("Audio ref 404");
     }
