@@ -17,7 +17,7 @@ export const icon = style({
   height: 28,
   width: 28,
   cursor: "pointer",
-  margin: "0 0.25rem",
+  margin: "0.25rem 0.25rem 0 0.25rem",
 });
 
 export const imageBox = style({
@@ -54,27 +54,6 @@ export const volumeSlider = style({
   width: "100%",
 });
 
-globalStyle(`${volumeSlider} > input`, {
-  width: "100%",
-  WebkitAppearance: "none",
-  background: "transparent",
-  cursor: "pointer",
-});
-
-globalStyle(
-  `${volumeSlider} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
-  {
-    background: "#e5e5e5",
-  },
-);
-
-globalStyle(
-  `${volumeSlider} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
-  {
-    background: "#e5e5e5",
-  },
-);
-
 export const seek = style({
   display: "flex",
   width: "100%",
@@ -82,24 +61,60 @@ export const seek = style({
   padding: "1rem 0",
 });
 
-globalStyle(`${seek} > input`, {
-  width: "100%",
-  WebkitAppearance: "none",
-  background: "transparent",
-  cursor: "pointer",
-});
-
-globalStyle(
-  `${seek} > input::-webkit-slider-runnable-track, input::-moz-range-track`,
-  {
-    background: "#e5e5e5",
-    marginLeft: "12px",
-  },
-);
-
 globalStyle(`${seek} > p:first-of-type, p`, {
   marginLeft: "6px",
   marginRight: "6px",
+});
+
+globalStyle("input[type=range]", {
+  width: "100%",
+  WebkitAppearance: "none",
+  appearance: "none",
+  cursor: "pointer",
+  outline: "none",
+  position: "relative",
+  height: "10px",
+});
+
+globalStyle("input[type='range']::-webkit-slider-runnable-track", {
+  height: "2px",
+});
+
+globalStyle("input[type='range']::-webkit-slider-thumb", {
+  WebkitAppearance: "none",
+  appearance: "none",
+  width: "16px",
+  height: "16px",
+  background: "white",
+  borderRadius: "50%",
+  cursor: "pointer",
+  marginTop: "-7px",
+});
+
+globalStyle("input[type='range']:focus::-webkit-slider-thumb", {
+  border: "1px solid white",
+  outline: "3px solid white",
+  outlineOffset: "0.125rem",
+});
+
+globalStyle("input[type='range']::-moz-range-track", {
+  height: "2px",
+});
+
+globalStyle("input[type='range']::-moz-range-thumb", {
+  appearance: "none",
+  width: "16px",
+  height: "16px",
+  background: "white",
+  borderRadius: "50%",
+  cursor: "pointer",
+  marginTop: "-7px",
+});
+
+globalStyle("input[type='range']:focus::-moz-range-thumb", {
+  border: "1px solid white",
+  outline: "3px solid white",
+  outlineOffset: "0.125rem",
 });
 
 const shimmer = keyframes({

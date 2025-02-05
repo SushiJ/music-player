@@ -123,8 +123,9 @@ export function Player() {
               handleDrag={handleSongDrag}
               currentTime={currentTime}
               duration={duration}
+              color={song.color}
             />
-            <VolumeSlider />
+            <VolumeSlider color={song.color} />
           </FullscreenContainerBody>
         </FullscreenContainer>
       ) : (
@@ -143,8 +144,9 @@ export function Player() {
                 handleDrag={handleSongDrag}
                 currentTime={currentTime}
                 duration={duration}
+                color={song.color}
               />
-              <VolumeSlider />
+              <VolumeSlider color={song.color} />
             </CardBody>
           </Card>
         </Container>
