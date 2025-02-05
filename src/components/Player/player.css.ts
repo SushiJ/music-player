@@ -14,8 +14,6 @@ export const cardSmall = style({
 });
 
 export const icon = style({
-  height: 28,
-  width: 28,
   cursor: "pointer",
   margin: "0.25rem 0.25rem 0 0.25rem",
 });

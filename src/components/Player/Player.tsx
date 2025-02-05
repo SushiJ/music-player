@@ -5,6 +5,7 @@ import {
   SkipBack,
   SkipForward,
   CornersOut,
+  CornersIn,
 } from "@phosphor-icons/react";
 
 import { useAudioContext } from "../../hooks/AudioContext/AudioContext";
@@ -26,7 +27,6 @@ import {
 } from "../Layout/container";
 
 import { TrackSlider, VolumeSlider } from "./slider";
-import { CornersIn } from "@phosphor-icons/react/dist/ssr";
 
 export function Player() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -205,15 +205,17 @@ function InteractionButtons(props: {
     >
       <SkipBack
         className={icon}
+        size={24}
         onClick={() => props.handleSkip("SKIP_BACKWARDS")}
       />
       {!props.isPlaying ? (
-        <Play className={icon} onClick={props.handlePlay} />
+        <Play size={24} className={icon} onClick={props.handlePlay} />
       ) : (
-        <Pause className={icon} onClick={props.handlePause} />
+        <Pause size={24} className={icon} onClick={props.handlePause} />
       )}
       <SkipForward
         className={icon}
+        size={24}
         onClick={() => props.handleSkip("SKIP_FORWARDS")}
       />
     </div>

@@ -52,7 +52,7 @@ export function VolumeSlider(props: { color: Array<string> }) {
             playerDispatch({ type: "SET_MUTE" });
           }}
         >
-          <SpeakerSimpleHigh className={icon} />
+          <SpeakerSimpleHigh size={24} className={icon} />
         </span>
       ) : (
         <span
@@ -60,7 +60,7 @@ export function VolumeSlider(props: { color: Array<string> }) {
             playerDispatch({ type: "SET_UNMUTE" });
           }}
         >
-          <SpeakerSimpleX className={icon} />
+          <SpeakerSimpleX size={24} className={icon} />
         </span>
       )}
       <input
