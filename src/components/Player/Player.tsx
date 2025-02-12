@@ -120,7 +120,7 @@ export function Player() {
             <InteractionButtons
               handlePause={handlePause}
               handleSkip={handleSkip}
-              handlePlay={handlePause}
+              handlePlay={handlePlay}
               isPlaying={isPlaying}
             />
             <TrackSlider
